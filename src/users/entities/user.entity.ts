@@ -9,8 +9,7 @@ export class UserEntity extends TimestampEntities {
     id!: string;
 
     @Column({
-        nullable: false,
-        unique: true
+        nullable: false
     })
     username!: string;
 

@@ -14,8 +14,8 @@ export class AuthService {
     ) {
     }
 
-    async validateUser(identifier: string, enteredPassword: string): Promise<Partial<UserEntity>> {
-        const user: UserEntity = await this.usersService.findOneUserByIdentifier(identifier);
+    async validateUser(email: string, enteredPassword: string): Promise<Partial<UserEntity>> {
+        const user: UserEntity = await this.usersService.findOneUserByEmail(email);
         if (!user) {
             return null;
         }
@@ -29,7 +29,7 @@ export class AuthService {
 
     async login(user: Partial<UserEntity>) {
         const token = await this.generateToken(user);
-        return { user, token };
+        return { access_token: token };
     }
 
     public async signUp(user: SignupUserDto) {
@@ -39,14 +39,18 @@ export class AuthService {
         const pass: string = await AuthService.hashPassword(user.password);
         const newUser = await this.usersService.createUser({ ...user, password: pass });
 
-        const { password, ...result } = newUser;
-        const token = await this.generateToken(result);
+        const token = await this.generateToken(newUser);
 
-        return { user: result, token };
+        return { access_token: token };
     }
 
-    private async generateToken(user) {
-        return await this.jwtService.signAsync(user);
+    private async generateToken(user): Promise<string> {
+        const payload = {
+            username: user.username,
+            sub: user.id,
+            role: user.role
+        };
+        return await this.jwtService.signAsync(payload);
     }
 
     static async hashPassword(password) {

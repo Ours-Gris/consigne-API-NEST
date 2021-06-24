@@ -5,18 +5,18 @@ export class CreateUserDto {
 
     @IsNotEmpty()
     @IsString()
-    username: string;
+    readonly username: string;
 
     @IsNotEmpty()
     @IsString()
     @IsEmail()
-    email: string;
+    readonly email: string;
 
     @IsNotEmpty()
     @IsString()
-    password: string;
+    readonly password: string;
 
     @IsNotEmpty()
     @IsEnum(UserRole)
-    role: UserRole;
+    readonly role: UserRole;
 }

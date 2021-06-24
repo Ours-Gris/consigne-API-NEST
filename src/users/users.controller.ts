@@ -18,6 +18,10 @@ import { UpdateResult } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { DoesUserExist } from '../auth/guards/doesUserExist.guard';
+import { User } from '../decorators/user.decorator';
+import { Roles } from '../decorators/roles.decorator';
+import { UserRole } from '../enums/user.role';
+import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Controller('users')
 export class UsersController {
@@ -25,49 +29,58 @@ export class UsersController {
         private readonly usersService: UsersService
     ) {}
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
     @Get()
-    async findAllUsers(
-        @Query('_sort') sort,
+    async findUsers(
+        @User() user,
+        @Query('_sort', new DefaultValuePipe('username')) sortBy,
+        @Query('_direction', new DefaultValuePipe('ASC')) sortDirection,
         @Query('_start', new DefaultValuePipe(0), ParseIntPipe) start,
         @Query('_limit', new DefaultValuePipe(3), ParseIntPipe) limit
     ): Promise<UserEntity[]> {
-        return await this.usersService.findUsers(start, limit);
+        const order = {
+            [sortBy]: sortDirection.toUpperCase()
+        }
+        return await this.usersService.findUsers(start, limit, order);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
     @Get('count')
     async countUsers(): Promise<Number> {
         return await this.usersService.countUsers();
     }
 
-    @UseGuards(JwtAuthGuard)
-    @UseGuards(DoesUserExist)
+    @UseGuards(JwtAuthGuard, DoesUserExist, RolesGuard)
+    @Roles(UserRole.ADMIN)
     @Post()
     async createUser(@Body() newUser: CreateUserDto): Promise<UserEntity> {
-        console.log(newUser);
         return await this.usersService.createUserWithHash(newUser);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
     @Put(':id')
     async updateUser(@Param('id') id: string, @Body() user: UpdateUserDto): Promise<UserEntity> {
-        console.log(id)
         return await this.usersService.updateUser(id, user);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
     @Delete(':id')
     async deleteUser(@Param('id') id: string): Promise<UpdateResult> {
         return await this.usersService.deleteUser(id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
     @Get('recover/:id')
     async restoreUser(@Param('id') id: string): Promise<UpdateResult> {
         return await this.usersService.restoreUser(id);
     }
 
+    //Ouvrir le droit au propiétaire en plus de l'admin
     @UseGuards(JwtAuthGuard)
     @Get(':id')
     async findOneUser(@Param('id') id: string): Promise<UserEntity> {

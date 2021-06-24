@@ -14,18 +14,20 @@ export class UsersService {
     ) {
     }
 
-    async findOneUserById(id): Promise<UserEntity> {
-        return await this.userRepository.findOne({ id: id });
+    async findOneUserById(id: string): Promise<UserEntity> {
+        return await this.userRepository.findOne({ id });
     }
 
-    async findOneUserByIdentifier(identifier): Promise<UserEntity> {
-        return await this.userRepository.createQueryBuilder('user')
-            .where('user.username = :identifier or user.email = :identifier', { identifier })
-            .getOne();
+    async findOneUserByEmail(email: string): Promise<UserEntity> {
+        return await this.userRepository.findOne({ email });
     }
 
-    async findUsers(skip: number, take: number): Promise<UserEntity[]> {
-        return await this.userRepository.find({ skip, take });
+    async findUsers(
+        skip: number,
+        take: number,
+        order: any
+    ): Promise<UserEntity[]> {
+        return await this.userRepository.find({ skip, take, order});
     }
 
     async findAllUsers(): Promise<UserEntity[]> {
