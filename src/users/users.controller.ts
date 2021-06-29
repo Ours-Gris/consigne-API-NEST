@@ -17,11 +17,11 @@ import { UserEntity } from './entities/user.entity';
 import { UpdateResult } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { DoesUserExist } from '../auth/guards/doesUserExist.guard';
 import { User } from '../decorators/user.decorator';
 import { Roles } from '../decorators/roles.decorator';
 import { UserRole } from '../enums/user.role';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { EmailUniqueGuard } from '../auth/guards/email-unique.guard';
 
 @Controller('users')
 export class UsersController {
@@ -52,13 +52,14 @@ export class UsersController {
         return await this.usersService.countUsers();
     }
 
-    @UseGuards(JwtAuthGuard, DoesUserExist, RolesGuard)
+    @UseGuards(JwtAuthGuard, EmailUniqueGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
     @Post()
     async createUser(@Body() newUser: CreateUserDto): Promise<UserEntity> {
         return await this.usersService.createUserWithHash(newUser);
     }
 
+    //Ouvrir le droit au propiétaire en plus de l'admin ACL
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
     @Put(':id')

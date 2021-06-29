@@ -1,5 +1,6 @@
 import { IsEmail, IsEnum, IsOptional, IsString } from 'class-validator';
 import { UserRole } from '../../enums/user.role';
+import { UserStatus } from '../../enums/user.status';
 
 export class UpdateUserDto {
 
@@ -19,4 +20,8 @@ export class UpdateUserDto {
     @IsOptional()
     @IsEnum(UserRole)
     role: UserRole;
+
+    @IsOptional()
+    @IsEnum(UserStatus)
+    status!: UserStatus;
 }

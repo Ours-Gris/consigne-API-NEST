@@ -1,6 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { UserRole } from '../../enums/user.role';
 import { TimestampEntities } from '../../generics/timestamp.entities';
+import { UserStatus } from '../../enums/user.status';
 
 @Entity('user')
 export class UserEntity extends TimestampEntities {
@@ -29,5 +30,12 @@ export class UserEntity extends TimestampEntities {
         enum: UserRole,
         default: UserRole.USER
     })
-    role!: string;
+    role!: UserRole;
+
+    @Column({
+        type: 'enum',
+        enum: UserStatus,
+        default: UserStatus.PENDING
+    })
+    status!: UserStatus;
 }
