@@ -64,8 +64,7 @@ export class AuthService {
 
     public async resetPassword(user: UserEntity) {
         const token = await this.generateToken(user);
-        // c'est surement un lient vers le front avec un token pour pouvoir changer le mdp
-        const forgotLink = `${process.env.APP_CORS_ORIGIN}/auth/reset-password?token=${token}`;
+        const forgotLink = `${process.env.APP_CORS_ORIGIN}/auth/new-password?token=${token}`;
 
         await this.mailerService.sendMail({
             to: user.email,

@@ -46,6 +46,9 @@ export class UsersService {
 
     // Il est possible de faire une update de masse avec une autre methode
     async updateUser(id: string, user: UpdateUserDto): Promise<UserEntity> {
+        if (user.password) {
+            user.password = await AuthService.hashPassword(user.password);
+        }
         // On récupére le user et on remplace les anciennes valeurs
         const targetUser = await this.userRepository.preload({
             id,

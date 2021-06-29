@@ -22,6 +22,7 @@ import { Roles } from '../decorators/roles.decorator';
 import { UserRole } from '../enums/user.role';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { EmailUniqueGuard } from '../auth/guards/email-unique.guard';
+import { PayloadInterface } from './interfaces/payload.interface';
 
 @Controller('users')
 export class UsersController {
@@ -59,7 +60,12 @@ export class UsersController {
         return await this.usersService.createUserWithHash(newUser);
     }
 
-    //Ouvrir le droit au propiétaire en plus de l'admin ACL
+    @UseGuards(JwtAuthGuard)
+    @Put('me')
+    async updateMe(@User() payload: PayloadInterface, @Body() user: UpdateUserDto): Promise<UserEntity> {
+        return await this.usersService.updateUser(payload.sub, user);
+    }
+
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
     @Put(':id')
