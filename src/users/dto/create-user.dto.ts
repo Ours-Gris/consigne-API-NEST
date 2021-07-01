@@ -16,6 +16,24 @@ export class CreateUserDto {
     @IsString()
     readonly password: string;
 
+    @IsString()
+    company!: string;
+
+    @IsString()
+    adress!: string;
+
+    @IsString()
+    adress_details!: string;
+
+    @IsString()
+    postal_code!: string;
+
+    @IsString()
+    city!: string;
+
+    @IsString()
+    tel!: string;
+
     @IsNotEmpty()
     @IsEnum(UserRole)
     readonly role: UserRole;

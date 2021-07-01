@@ -38,4 +38,34 @@ export class UserEntity extends TimestampEntities {
         default: UserStatus.PENDING
     })
     status!: UserStatus;
+
+    @Column({
+        nullable: true
+    })
+    company!: string;
+
+    @Column({
+        nullable: true
+    })
+    adress!: string;
+
+    @Column({
+        nullable: true
+    })
+    adress_details!: string;
+
+    @Column({
+        nullable: true
+    })
+    postal_code!: string;
+
+    @Column({
+        nullable: true
+    })
+    city!: string;
+
+    @Column({
+        nullable: true
+    })
+    tel!: string;
 }
