@@ -61,6 +61,12 @@ export class UsersController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get('me')
+    async getMe(@User() payload: PayloadInterface): Promise<UserEntity> {
+        return await this.usersService.findOneUserById(payload.sub);
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Put('me')
     async updateMe(@User() payload: PayloadInterface, @Body() user: UpdateUserDto): Promise<UserEntity> {
         return await this.usersService.updateUser(payload.sub, user);
