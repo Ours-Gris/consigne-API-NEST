@@ -34,7 +34,6 @@ export class UsersController {
     @Roles(UserRole.ADMIN)
     @Get()
     async findUsers(
-        @User() user,
         @Query('_sort', new DefaultValuePipe('username')) sortBy,
         @Query('_direction', new DefaultValuePipe('ASC')) sortDirection,
         @Query('_start', new DefaultValuePipe(0), ParseIntPipe) start,
@@ -60,6 +59,7 @@ export class UsersController {
         return await this.usersService.createUserWithHash(newUser);
     }
 
+    // TODO retourner une version nettoyé du User
     @UseGuards(JwtAuthGuard)
     @Get('me')
     async getMe(@User() payload: PayloadInterface): Promise<UserEntity> {
