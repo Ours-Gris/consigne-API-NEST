@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
-import { Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthService } from '../auth/auth.service';
 
@@ -61,13 +61,13 @@ export class UsersService {
         return await this.userRepository.save(targetUser);
     }
 
-    async deleteUser(id: string): Promise<UpdateResult> {
-        return await this.userRepository.softDelete(id);
+    async deleteUser(id: string): Promise<DeleteResult> {
+        return await this.userRepository.delete(id);
     }
 
-    async restoreUser(id: string): Promise<UpdateResult> {
-        return await this.userRepository.restore(id);
-    }
+    // async restoreUser(id: string): Promise<UpdateResult> {
+    //     return await this.userRepository.restore(id);
+    // }
 
     async countUsers(): Promise<Number> {
         return await this.userRepository.count();

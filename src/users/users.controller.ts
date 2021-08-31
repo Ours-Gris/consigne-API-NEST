@@ -14,7 +14,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserEntity } from './entities/user.entity';
-import { UpdateResult } from 'typeorm';
+import { DeleteResult } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { User } from '../decorators/user.decorator';
@@ -82,16 +82,16 @@ export class UsersController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
     @Delete(':id')
-    async deleteUser(@Param('id') id: string): Promise<UpdateResult> {
+    async deleteUser(@Param('id') id: string): Promise<DeleteResult> {
         return await this.usersService.deleteUser(id);
     }
 
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(UserRole.ADMIN)
-    @Get('recover/:id')
-    async restoreUser(@Param('id') id: string): Promise<UpdateResult> {
-        return await this.usersService.restoreUser(id);
-    }
+    // @UseGuards(JwtAuthGuard, RolesGuard)
+    // @Roles(UserRole.ADMIN)
+    // @Get('recover/:id')
+    // async restoreUser(@Param('id') id: string): Promise<UpdateResult> {
+    //     return await this.usersService.restoreUser(id);
+    // }
 
     //Ouvrir le droit au propiétaire en plus de l'admin
     @UseGuards(JwtAuthGuard)

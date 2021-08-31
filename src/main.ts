@@ -9,10 +9,11 @@ async function bootstrap() {
     const configService = app.get(ConfigService);
 
     // Middleware pour gérer les CORS
-    const corsOptions = {
-        origin: [configService.get('APP_CORS_ORIGIN')]
-    };
-    app.enableCors(corsOptions);
+    // const corsOptions = {
+    //     origin: [configService.get('APP_CORS_ORIGIN')]
+    // };
+    // app.enableCors(corsOptions);
+    app.enableCors();
 
     // Middleware pour afficher les logs
     app.use(morgan('dev'));
