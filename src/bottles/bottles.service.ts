@@ -26,7 +26,10 @@ export class BottlesService {
         return await this.bottleRepository.find({ skip, take, order});
     }
 
-    async createBottle(bottle: CreateBottleDto): Promise<BottleEntity> {
+    async createBottle(bottle: CreateBottleDto, imgBottle?: Express.Multer.File): Promise<BottleEntity> {
+        if (imgBottle) {
+
+        }
         return await this.bottleRepository.save(bottle);
     }
 

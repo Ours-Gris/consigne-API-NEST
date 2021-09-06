@@ -13,6 +13,4 @@ export class CreateBottleDto {
     @IsNotEmpty()
     @IsString()
     readonly code: string;
-
-    //image plus tard
 }

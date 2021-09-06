@@ -6,13 +6,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BottleEntity } from './entities/bottle.entity';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true
-    }),
-    TypeOrmModule.forFeature([BottleEntity])
-  ],
-  controllers: [BottlesController],
-  providers: [BottlesService]
+    imports: [
+        ConfigModule.forRoot({
+            isGlobal: true
+        }),
+        TypeOrmModule.forFeature([BottleEntity])
+    ],
+    controllers: [BottlesController],
+    providers: [BottlesService]
 })
-export class BottlesModule {}
+export class BottlesModule {
+}

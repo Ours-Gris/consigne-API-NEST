@@ -7,8 +7,8 @@ import {
     ParseIntPipe,
     Post,
     Put,
-    Query,
-    UseGuards
+    Query, UploadedFile,
+    UseGuards, UseInterceptors
 } from '@nestjs/common';
 import { BottlesService } from './bottles.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -19,6 +19,9 @@ import { BottleEntity } from './entities/bottle.entity';
 import { CreateBottleDto } from './dto/create-bottle.dto';
 import { UpdateBottleDto } from './dto/update-bottle.dto';
 import { UpdateResult } from 'typeorm';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { imageFileFilter } from '../utils/file-upload.utils';
 
 @Controller('bottles')
 export class BottlesController {
@@ -53,8 +56,16 @@ export class BottlesController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
     @Post()
-    async createBottle(@Body() newBottle: CreateBottleDto): Promise<BottleEntity> {
-        return await this.bottlesService.createBottle(newBottle);
+    @UseInterceptors(FileInterceptor('img_bottle', {
+            storage: diskStorage({
+                destination: './uploads/bottle/'
+            }),
+            fileFilter: imageFileFilter
+        }),
+    )
+    async createBottle(@Body() newBottle: CreateBottleDto, @UploadedFile() imgBottle: Express.Multer.File): Promise<BottleEntity> {
+        console.log(imgBottle);
+        return await this.bottlesService.createBottle(newBottle, imgBottle);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
