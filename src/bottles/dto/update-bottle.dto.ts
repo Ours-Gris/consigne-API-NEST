@@ -13,4 +13,12 @@ export class UpdateBottleDto {
     @IsOptional()
     @IsString()
     code: string;
+
+    @IsOptional()
+    @IsString()
+    img_original_name: string;
+
+    @IsOptional()
+    @IsString()
+    img_name: string;
 }

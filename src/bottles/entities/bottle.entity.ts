@@ -21,4 +21,14 @@ export class BottleEntity extends TimestampEntities {
         nullable: true
     })
     code!: string;
+
+    @Column({
+        nullable: true
+    })
+    img_original_name!: string;
+
+    @Column({
+        nullable: true
+    })
+    img_name!: string;
 }

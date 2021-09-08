@@ -7,7 +7,7 @@ import {
     ParseIntPipe,
     Post,
     Put,
-    Query, UploadedFile,
+    Query, Res, UploadedFile,
     UseGuards, UseInterceptors
 } from '@nestjs/common';
 import { BottlesService } from './bottles.service';
@@ -57,12 +57,9 @@ export class BottlesController {
     @Roles(UserRole.ADMIN)
     @Post()
     @UseInterceptors(FileInterceptor('img_bottle', {
-            storage: diskStorage({
-                destination: './uploads/bottle/'
-            }),
-            fileFilter: imageFileFilter
-        }),
-    )
+        storage: diskStorage({ destination: './uploads/bottle/' }),
+        fileFilter: imageFileFilter
+    }))
     async createBottle(@Body() newBottle: CreateBottleDto, @UploadedFile() imgBottle: Express.Multer.File): Promise<BottleEntity> {
         console.log(imgBottle);
         return await this.bottlesService.createBottle(newBottle, imgBottle);
@@ -71,8 +68,13 @@ export class BottlesController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
     @Put(':id')
-    async updateBottle(@Param('id') id: string, @Body() bottle: UpdateBottleDto): Promise<BottleEntity> {
-        return await this.bottlesService.updateBottle(id, bottle);
+    @UseInterceptors(FileInterceptor('img_bottle', {
+        storage: diskStorage({ destination: './uploads/bottle/' }),
+        fileFilter: imageFileFilter
+    }))
+    async updateBottle(@Param('id') id: string, @Body() bottle: UpdateBottleDto, @UploadedFile() imgBottle: Express.Multer.File): Promise<BottleEntity> {
+        console.log(imgBottle);
+        return await this.bottlesService.updateBottle(id, bottle, imgBottle);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
@@ -81,12 +83,17 @@ export class BottlesController {
     async deleteBottle(@Param('id') id: string): Promise<UpdateResult> {
         return await this.bottlesService.deleteBottle(id);
     }
+    //
+    // @UseGuards(JwtAuthGuard, RolesGuard)
+    // @Roles(UserRole.ADMIN)
+    // @Get('recover/:id')
+    // async restoreBottle(@Param('id') id: string): Promise<UpdateResult> {
+    //     return await this.bottlesService.restoreBottle(id);
+    // }
 
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(UserRole.ADMIN)
-    @Get('recover/:id')
-    async restoreBottle(@Param('id') id: string): Promise<UpdateResult> {
-        return await this.bottlesService.restoreBottle(id);
+    @Get('img/:imgPath')
+    seeUploadedFile(@Param('imgPath') image, @Res() res) {
+        return res.sendFile(image, { root: './uploads/bottle' });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
