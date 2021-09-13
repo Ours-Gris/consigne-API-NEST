@@ -65,17 +65,7 @@ export class UsersService {
         return await this.userRepository.delete(id);
     }
 
-    // async restoreUser(id: string): Promise<UpdateResult> {
-    //     return await this.userRepository.restore(id);
-    // }
-
     async countUsers(): Promise<Number> {
         return await this.userRepository.count();
     }
-
-    // Pour des requetes spécifiques
-    // async queryBuider() {
-    //     const qb = this.userRepository.createQueryBuilder();
-    //     return await qb.select()
-    // }
 }

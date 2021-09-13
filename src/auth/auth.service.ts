@@ -6,13 +6,13 @@ import { JwtService } from '@nestjs/jwt';
 import { SignupUserDto } from './dto/signup-user.dto';
 import { UserRole } from '../enums/user.role';
 import { UserStatus } from '../enums/user.status';
-// import { MailerService } from '@nestjs-modules/mailer';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
     constructor(
         private readonly usersService: UsersService,
-        // private readonly mailerService: MailerService,
+        private readonly mailerService: MailerService,
         private readonly jwtService: JwtService
     ) {
     }
@@ -43,37 +43,37 @@ export class AuthService {
         const newUser = await this.usersService.createUser({ ...user, password: pass });
 
         const token = await this.generateToken(newUser);
+        await this.sendConfirmation(newUser, token)
 
         return { access_token: token };
     }
 
-    // public async sendConfirmation(user: IUser) {
-    //     const token = await this.signUser(user, false);
-    //     const confirmLink = `${this.clientAppUrl}/auth/confirm?token=${token}`;
-    //
-    //     await this.mailService.send({
-    //         from: this.configService.get<string>('JS_CODE_MAIL'),
-    //         to: user.email,
-    //         subject: 'Verify User',
-    //         html: `
-    //             <h3>Hello ${user.firstName}!</h3>
-    //             <p>Please use this <a href="${confirmLink}">link</a> to confirm your account.</p>
-    //         `,
-    //     });
-    // }
+    public async sendConfirmation(user: UserEntity, token: string) {
+        const confirmLink = `${process.env.APP_CORS_ORIGIN}/auth/login?token=${token}`;
+
+        await this.mailerService.sendMail({
+            to: user.email,
+            subject: 'Verify User',
+            html: `
+                <h3>Hello ${user.username}!</h3>
+                <p>Please use this <a href="${confirmLink}">link</a> to confirm your account.</p>
+            `,
+        });
+    }
 
     public async resetPassword(user: UserEntity) {
-        // const token = await this.generateToken(user);
-        // const forgotLink = `${process.env.APP_CORS_ORIGIN}/auth/new-password?token=${token}`;
+        const token = await this.generateToken(user);
+        const forgotLink = `${process.env.APP_CORS_ORIGIN}/auth/new-password?token=${token}`;
 
-        // await this.mailerService.sendMail({
-        //     to: user.email,
-        //     subject: 'Forgot Password',
-        //     html: `
-        //         <h3>Hello ${user.username}!</h3>
-        //         <p>Please use this <a href="${forgotLink}">link</a> to reset your password.</p>
-        //     `
-        // });
+        return await this.mailerService.sendMail({
+            to: user.email,
+            subject: 'Forgot Password',
+            text: `Please use this ${forgotLink} to reset your password.`,
+            html: `
+                <h3>Hello ${user.username}!</h3>
+                <p>Please use this <a href="${forgotLink}">link</a> to reset your password.</p>
+            `
+        });
 
         // Avec Template
         // await this.mailerService.sendMail({

@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { UserRole } from '../../enums/user.role';
 
 export class CreateUserDto {
@@ -18,29 +18,37 @@ export class CreateUserDto {
 
     @IsOptional()
     @IsString()
-    company!: string;
+    readonly company!: string;
 
     @IsOptional()
     @IsString()
-    adress!: string;
+    readonly adress!: string;
 
     @IsOptional()
     @IsString()
-    adress_details!: string;
+    readonly adress_details!: string;
 
     @IsOptional()
     @IsString()
-    postal_code!: string;
+    readonly postal_code!: string;
 
     @IsOptional()
     @IsString()
-    city!: string;
+    readonly city!: string;
 
     @IsOptional()
     @IsString()
-    tel!: string;
+    readonly tel!: string;
 
     @IsNotEmpty()
     @IsEnum(UserRole)
     readonly role: UserRole;
+
+    @IsOptional()
+    @IsBoolean()
+    readonly reseller!: boolean;
+
+    @IsOptional()
+    @IsBoolean()
+    readonly producer!: boolean;
 }

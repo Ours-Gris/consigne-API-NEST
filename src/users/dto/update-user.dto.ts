@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsEmail, IsEnum, IsOptional, IsString } from 'class-validator';
 import { UserRole } from '../../enums/user.role';
 import { UserStatus } from '../../enums/user.status';
 
@@ -48,4 +48,12 @@ export class UpdateUserDto {
     @IsOptional()
     @IsEnum(UserStatus)
     status!: UserStatus;
+
+    @IsOptional()
+    @IsBoolean()
+    reseller: boolean;
+
+    @IsOptional()
+    @IsBoolean()
+    producer: boolean;
 }

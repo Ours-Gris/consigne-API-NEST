@@ -40,6 +40,16 @@ export class UserEntity extends TimestampEntities {
     status!: UserStatus;
 
     @Column({
+        default: false
+    })
+    reseller!: boolean;
+
+    @Column({
+        default: false
+    })
+    producer!: boolean;
+
+    @Column({
         nullable: true
     })
     company!: string;
