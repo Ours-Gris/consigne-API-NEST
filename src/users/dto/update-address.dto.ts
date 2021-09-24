@@ -1,0 +1,20 @@
+import { IsOptional, IsString } from 'class-validator';
+
+export class UpdateAddressDto {
+
+    @IsOptional()
+    @IsString()
+    readonly address!: string;
+
+    @IsOptional()
+    @IsString()
+    readonly address_details!: string;
+
+    @IsOptional()
+    @IsString()
+    readonly postal_code!: string;
+
+    @IsOptional()
+    @IsString()
+    readonly city!: string;
+}

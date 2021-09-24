@@ -1,59 +1,77 @@
 import { IsBoolean, IsEmail, IsEnum, IsOptional, IsString } from 'class-validator';
 import { UserRole } from '../../enums/user.role';
 import { UserStatus } from '../../enums/user.status';
+import { Type } from 'class-transformer';
+import { UpdateAddressDto } from './update-address.dto';
 
 export class UpdateUserDto {
 
     @IsOptional()
     @IsString()
-    username: string;
+    readonly username: string;
 
     @IsOptional()
     @IsString()
     @IsEmail()
-    email: string;
+    readonly email: string;
 
     @IsOptional()
     @IsString()
-    password!: string;
+    readonly password!: string;
 
     @IsOptional()
     @IsString()
-    company!: string;
+    readonly company!: string;
 
     @IsOptional()
     @IsString()
-    adress!: string;
+    readonly tel!: string;
 
     @IsOptional()
-    @IsString()
-    adress_details!: string;
+    @Type(() => UpdateAddressDto)
+    readonly address!: UpdateAddressDto;
 
     @IsOptional()
-    @IsString()
-    postal_code!: string;
-
-    @IsOptional()
-    @IsString()
-    city!: string;
-
-    @IsOptional()
-    @IsString()
-    tel!: string;
+    @Type(() => UpdateAddressDto)
+    readonly delivery_address!: UpdateAddressDto;
 
     @IsOptional()
     @IsEnum(UserRole)
-    role: UserRole;
+    readonly role: UserRole;
 
     @IsOptional()
     @IsEnum(UserStatus)
-    status!: UserStatus;
+    readonly status!: UserStatus;
 
     @IsOptional()
     @IsBoolean()
-    reseller: boolean;
+    readonly reseller: boolean;
 
     @IsOptional()
     @IsBoolean()
-    producer: boolean;
+    readonly producer: boolean;
+
+    @IsOptional()
+    @IsString()
+    readonly delivery_schedules!: string;
+
+    @IsOptional()
+    @IsString()
+    readonly delivery_data!: string;
+
+    @IsOptional()
+    @IsBoolean()
+    readonly heavy_truck!: boolean;
+
+    @IsOptional()
+    @IsBoolean()
+    readonly stacker!: boolean;
+
+    @IsOptional()
+    @IsBoolean()
+    readonly forklift!: boolean;
+
+    @IsOptional()
+    @IsBoolean()
+    readonly pallet_truck!: boolean;
 }

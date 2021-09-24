@@ -1,10 +1,8 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserEntity } from '../users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { SignupUserDto } from './dto/signup-user.dto';
-import { UserRole } from '../enums/user.role';
 import { UserStatus } from '../enums/user.status';
 import { MailerService } from '@nestjs-modules/mailer';
 
@@ -35,19 +33,6 @@ export class AuthService {
         return { access_token: token };
     }
 
-    public async signUp(user: SignupUserDto) {
-        if (user.role === UserRole.ADMIN) {
-            throw new UnauthorizedException();
-        }
-        const pass: string = await AuthService.hashPassword(user.password);
-        const newUser = await this.usersService.createUser({ ...user, password: pass });
-
-        const token = await this.generateToken(newUser);
-        await this.sendConfirmation(newUser, token)
-
-        return { access_token: token };
-    }
-
     public async sendConfirmation(user: UserEntity, token: string) {
         const confirmLink = `${process.env.APP_CORS_ORIGIN}/auth/login?token=${token}`;
 
@@ -74,19 +59,6 @@ export class AuthService {
                 <p>Please use this <a href="${forgotLink}">link</a> to reset your password.</p>
             `
         });
-
-        // Avec Template
-        // await this.mailerService.sendMail({
-        //     to: 'test@nestjs.com',
-        //     from: 'noreply@nestjs.com',
-        //     subject: 'Testing Nest Mailermodule with template ✔',
-        //     template: 'welcome', // The `.pug`, `.ejs` or `.hbs` extension is appended automatically.
-        //     context: {
-        //         // Data to be sent to template engine.
-        //         code: 'cf1a3f828287',
-        //         username: 'john doe'
-        //     }
-        // });
     }
 
     public async confirm(user: UserEntity) {

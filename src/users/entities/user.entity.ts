@@ -1,7 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { UserRole } from '../../enums/user.role';
 import { TimestampEntities } from '../../generics/timestamp.entities';
 import { UserStatus } from '../../enums/user.status';
+import { AddressEntity } from './address.entity';
 
 @Entity('user')
 export class UserEntity extends TimestampEntities {
@@ -21,7 +22,7 @@ export class UserEntity extends TimestampEntities {
     email!: string;
 
     @Column({
-        nullable: false
+        nullable: true
     })
     password!: string;
 
@@ -57,25 +58,49 @@ export class UserEntity extends TimestampEntities {
     @Column({
         nullable: true
     })
-    adress!: string;
-
-    @Column({
-        nullable: true
-    })
-    adress_details!: string;
-
-    @Column({
-        nullable: true
-    })
-    postal_code!: string;
-
-    @Column({
-        nullable: true
-    })
-    city!: string;
-
-    @Column({
-        nullable: true
-    })
     tel!: string;
+
+    @Column({
+        nullable: true
+    })
+    delivery_schedules!: string;
+
+    @Column({
+        nullable: true
+    })
+    delivery_data!: string;
+
+    @Column({
+        default: false
+    })
+    heavy_truck!: boolean;
+
+    @Column({
+        default: false
+    })
+    stacker!: boolean;
+
+    @Column({
+        default: false
+    })
+    forklift!: boolean;
+
+    @Column({
+        default: false
+    })
+    pallet_truck!: boolean;
+
+    @OneToOne(
+        () => AddressEntity,
+        { nullable: true }
+    )
+    @JoinColumn()
+    address!: AddressEntity;
+
+    @OneToOne(
+        () => AddressEntity,
+        { nullable: true }
+    )
+    @JoinColumn()
+    delivery_address!: AddressEntity;
 }
