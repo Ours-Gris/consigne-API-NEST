@@ -30,10 +30,9 @@ export class BottlesService {
     async createBottle(bottle: CreateBottleDto, imgBottle?: Express.Multer.File): Promise<BottleEntity> {
         let newBottle = {
             ...bottle,
-            img_original_name: imgBottle.originalname,
-            img_name: imgBottle.filename
+            img_original_name: imgBottle ? imgBottle.originalname : '',
+            img_name: imgBottle ? imgBottle.filename : ''
         };
-
         return await this.bottleRepository.save(newBottle);
     }
 

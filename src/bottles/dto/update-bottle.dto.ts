@@ -4,15 +4,23 @@ export class UpdateBottleDto {
 
     @IsOptional()
     @IsString()
-    name: string;
+    readonly name: string;
 
     @IsOptional()
     @IsString()
-    description: string;
+    readonly description: string;
 
     @IsOptional()
     @IsString()
-    code: string;
+    readonly code: string;
+
+    @IsOptional()
+    @IsString()
+    readonly nbr_by_palette: string;
+
+    @IsOptional()
+    @IsString()
+    readonly internal_stock: string;
 
     @IsOptional()
     @IsString()

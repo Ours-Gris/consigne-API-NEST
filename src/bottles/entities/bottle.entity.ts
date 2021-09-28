@@ -23,6 +23,16 @@ export class BottleEntity extends TimestampEntities {
     code!: string;
 
     @Column({
+        default: '0'
+    })
+    nbr_by_palette!: string;
+
+    @Column({
+        default: '0'
+    })
+    internal_stock!: string;
+
+    @Column({
         nullable: true
     })
     img_original_name!: string;
