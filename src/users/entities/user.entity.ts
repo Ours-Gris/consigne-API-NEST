@@ -90,6 +90,11 @@ export class UserEntity extends TimestampEntities {
     })
     pallet_truck!: boolean;
 
+    @Column({
+        nullable: true
+    })
+    internal_data!: string;
+
     @OneToOne(
         () => AddressEntity,
         { nullable: true }

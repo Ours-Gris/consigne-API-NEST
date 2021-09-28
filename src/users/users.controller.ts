@@ -6,13 +6,11 @@ import {
     Get,
     Param,
     ParseIntPipe,
-    Post,
     Put,
     Query,
     UseGuards
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { DeleteResult } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -21,7 +19,6 @@ import { User } from '../decorators/user.decorator';
 import { Roles } from '../decorators/roles.decorator';
 import { UserRole } from '../enums/user.role';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { EmailUniqueGuard } from '../auth/guards/email-unique.guard';
 import { PayloadInterface } from './interfaces/payload.interface';
 
 @Controller('users')
@@ -52,14 +49,13 @@ export class UsersController {
         return await this.usersService.countUsers();
     }
 
-    @UseGuards(JwtAuthGuard, EmailUniqueGuard, RolesGuard)
-    @Roles(UserRole.ADMIN)
-    @Post()
-    async createUser(@Body() newUser: CreateUserDto): Promise<UserEntity> {
-        return await this.usersService.createUserWithHash(newUser);
-    }
+    // @UseGuards(JwtAuthGuard, EmailUniqueGuard, RolesGuard)
+    // @Roles(UserRole.ADMIN)
+    // @Post()
+    // async createUser(@Body() newUser: CreateUserDto): Promise<UserEntity> {
+    //     return await this.usersService.createUser(newUser);
+    // }
 
-    // TODO retourner une version nettoyé du User
     @UseGuards(JwtAuthGuard)
     @Get('me')
     async getMe(@User() payload: PayloadInterface): Promise<UserEntity> {
@@ -85,13 +81,6 @@ export class UsersController {
     async deleteUser(@Param('id') id: string): Promise<DeleteResult> {
         return await this.usersService.deleteUser(id);
     }
-
-    // @UseGuards(JwtAuthGuard, RolesGuard)
-    // @Roles(UserRole.ADMIN)
-    // @Get('recover/:id')
-    // async restoreUser(@Param('id') id: string): Promise<UpdateResult> {
-    //     return await this.usersService.restoreUser(id);
-    // }
 
     //Ouvrir le droit au propiétaire en plus de l'admin
     @UseGuards(JwtAuthGuard)

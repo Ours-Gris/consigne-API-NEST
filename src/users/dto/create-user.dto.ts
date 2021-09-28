@@ -14,9 +14,9 @@ export class CreateUserDto {
     @IsEmail()
     readonly email: string;
 
-    @IsOptional()
-    @IsString()
-    readonly password: string;
+    // @IsOptional()
+    // @IsString()
+    // readonly password: string;
 
     @IsOptional()
     @IsString()
@@ -56,17 +56,21 @@ export class CreateUserDto {
 
     @IsOptional()
     @IsBoolean()
-    readonly heavy_truck!: boolean;
+    heavy_truck!: boolean;
 
     @IsOptional()
     @IsBoolean()
-    readonly stacker!: boolean;
+    stacker!: boolean;
 
     @IsOptional()
     @IsBoolean()
-    readonly forklift!: boolean;
+    forklift!: boolean;
 
     @IsOptional()
     @IsBoolean()
-    readonly pallet_truck!: boolean;
+    pallet_truck!: boolean;
+
+    @IsOptional()
+    @IsString()
+    readonly internal_data!: string;
 }

@@ -41,7 +41,7 @@ export class UpdateUserDto {
 
     @IsOptional()
     @IsEnum(UserStatus)
-    readonly status!: UserStatus;
+    status!: UserStatus;
 
     @IsOptional()
     @IsBoolean()
@@ -74,4 +74,8 @@ export class UpdateUserDto {
     @IsOptional()
     @IsBoolean()
     readonly pallet_truck!: boolean;
+
+    @IsOptional()
+    @IsString()
+    readonly internal_data!: string;
 }

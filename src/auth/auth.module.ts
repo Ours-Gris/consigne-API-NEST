@@ -21,7 +21,14 @@ import { EmailValidGuard } from './guards/email-valid.guard';
             }
         })
     ],
-    providers: [AuthService, LocalStrategy, JwtStrategy, RolesGuard, EmailUniqueGuard, EmailValidGuard],
+    providers: [
+        AuthService,
+        LocalStrategy,
+        JwtStrategy,
+        RolesGuard,
+        EmailUniqueGuard,
+        EmailValidGuard
+    ],
     exports: [AuthService],
     controllers: [AuthController]
 })

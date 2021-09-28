@@ -1,47 +1,38 @@
 import { IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { UserRole } from '../../enums/user.role';
+import { Type } from 'class-transformer';
+import { CreateAddressDto } from '../../users/dto/create-address.dto';
 
 export class SignupUserDto {
 
     @IsNotEmpty()
     @IsString()
-    username: string;
+    readonly username: string;
 
     @IsNotEmpty()
+    @IsString()
     @IsEmail()
-    email: string;
-
-    @IsNotEmpty()
-    @IsString()
-    password: string;
+    readonly email: string;
 
     @IsOptional()
     @IsString()
-    company!: string;
+    readonly company: string;
 
-    // @IsOptional()
-    // @IsString()
-    // adress!: string;
-    //
-    // @IsOptional()
-    // @IsString()
-    // adress_details!: string;
-    //
-    // @IsOptional()
-    // @IsString()
-    // postal_code!: string;
-    //
-    // @IsOptional()
-    // @IsString()
-    // city!: string;
+    @IsOptional()
+    @Type(() => CreateAddressDto)
+    readonly address!: CreateAddressDto;
+
+    @IsOptional()
+    @Type(() => CreateAddressDto)
+    readonly delivery_address!: CreateAddressDto;
 
     @IsOptional()
     @IsString()
-    tel!: string;
+    readonly tel!: string;
 
     @IsNotEmpty()
     @IsEnum(UserRole)
-    role: UserRole;
+    readonly role: UserRole;
 
     @IsOptional()
     @IsBoolean()
@@ -50,4 +41,32 @@ export class SignupUserDto {
     @IsOptional()
     @IsBoolean()
     readonly producer!: boolean;
+
+    @IsOptional()
+    @IsString()
+    readonly delivery_schedules!: string;
+
+    @IsOptional()
+    @IsString()
+    readonly delivery_data!: string;
+
+    @IsOptional()
+    @IsBoolean()
+    readonly heavy_truck!: boolean;
+
+    @IsOptional()
+    @IsBoolean()
+    readonly stacker!: boolean;
+
+    @IsOptional()
+    @IsBoolean()
+    readonly forklift!: boolean;
+
+    @IsOptional()
+    @IsBoolean()
+    readonly pallet_truck!: boolean;
+
+    @IsOptional()
+    @IsString()
+    readonly internal_data!: string;
 }

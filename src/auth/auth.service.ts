@@ -5,6 +5,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserStatus } from '../enums/user.status';
 import { MailerService } from '@nestjs-modules/mailer';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -12,8 +13,7 @@ export class AuthService {
         private readonly usersService: UsersService,
         private readonly mailerService: MailerService,
         private readonly jwtService: JwtService
-    ) {
-    }
+    ) {}
 
     async validateUser(email: string, enteredPassword: string): Promise<Partial<UserEntity>> {
         const user: UserEntity = await this.usersService.findOneUserByEmail(email);
@@ -46,6 +46,25 @@ export class AuthService {
         });
     }
 
+    public async addUser(user: CreateUserDto) {
+        const newUser = await this.usersService.createUser(user);
+        return await this.sendWelcome(newUser)
+    }
+
+    public async sendWelcome(user: UserEntity) {
+        const token = await this.generateToken(user);
+        const forgotLink = `${process.env.APP_CORS_ORIGIN}/auth/new-password?welcome=true&token=${token}`;
+
+        await this.mailerService.sendMail({
+            to: user.email,
+            subject: 'Bienvenue sur Oc\'consigne',
+            html: `
+                <h3>Bienvenue ${user.username}!</h3>
+                <p>Voila un lien pour valider votre email et définir votre mots de passe : <a href="${forgotLink}">Oc'consigne</a></p>
+            `,
+        });
+    }
+
     public async resetPassword(user: UserEntity) {
         const token = await this.generateToken(user);
         const forgotLink = `${process.env.APP_CORS_ORIGIN}/auth/new-password?token=${token}`;
@@ -64,8 +83,7 @@ export class AuthService {
     public async confirm(user: UserEntity) {
         if (user.status === UserStatus.PENDING) {
             user.status = UserStatus.ACTIVE;
-            user = await this.usersService.updateUser(user.id, user);
-            return this.login(user)
+            return await this.usersService.updateUser(user.id, user);
         }
         throw new BadRequestException('Confirmation error');
     }
@@ -85,6 +103,9 @@ export class AuthService {
     }
 
     private static async comparePassword(enteredPassword, dbPassword) {
+        if (!enteredPassword) {
+            return null
+        }
         return await bcrypt.compare(enteredPassword, dbPassword);
     }
 }

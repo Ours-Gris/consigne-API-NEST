@@ -37,23 +37,16 @@ export class UsersService {
         return await this.userRepository.find();
     }
 
-    async createUserWithHash(user: CreateUserDto): Promise<UserEntity> {
-        const pass = await AuthService.hashPassword(user.password);
+    async createUser(user: CreateUserDto): Promise<UserEntity> {
         if (user.address) {
             await this.addressRepository.save(user.address)
         }
         if (user.delivery_address) {
             await this.addressRepository.save(user.delivery_address)
         }
-        return this.userRepository.save({ ...user, password: pass });
+        return this.userRepository.save(user)
     }
 
-    // For signUp in authService
-    // async createUser(user: CreateUserDto): Promise<UserEntity> {
-    //     return await this.userRepository.save(user);
-    // }
-
-    // Il est possible de faire une update de masse avec une autre methode
     async updateUser(id: string, user: UpdateUserDto): Promise<UserEntity> {
 
         // On récupére le user et on remplace les anciennes valeurs
