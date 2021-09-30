@@ -35,6 +35,7 @@ export class BottlesController {
     @Roles(UserRole.ADMIN)
     @Get()
     async findBottles(
+        @Query('name_contains', new DefaultValuePipe('')) contains,
         @Query('_sort', new DefaultValuePipe('name')) sortBy,
         @Query('_direction', new DefaultValuePipe('ASC')) sortDirection,
         @Query('_start', new DefaultValuePipe(0), ParseIntPipe) start,
@@ -43,7 +44,14 @@ export class BottlesController {
         const order = {
             [sortBy]: sortDirection.toUpperCase()
         };
-        return await this.bottlesService.findBottles(start, limit, order);
+        return await this.bottlesService.findBottles(contains, start, limit, order);
+    }
+
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
+    @Get('export')
+    async findAll(): Promise<BottleEntity[]>  {
+        return await this.bottlesService.findAll();
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
@@ -83,13 +91,6 @@ export class BottlesController {
     async deleteBottle(@Param('id') id: string): Promise<UpdateResult> {
         return await this.bottlesService.deleteBottle(id);
     }
-    //
-    // @UseGuards(JwtAuthGuard, RolesGuard)
-    // @Roles(UserRole.ADMIN)
-    // @Get('recover/:id')
-    // async restoreBottle(@Param('id') id: string): Promise<UpdateResult> {
-    //     return await this.bottlesService.restoreBottle(id);
-    // }
 
     @Get('img/:imgPath')
     seeUploadedFile(@Param('imgPath') image, @Res() res) {

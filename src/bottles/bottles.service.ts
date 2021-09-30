@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BottleEntity } from './entities/bottle.entity';
-import { Repository, UpdateResult } from 'typeorm';
+import { Like, Repository, UpdateResult } from 'typeorm';
 import { CreateBottleDto } from './dto/create-bottle.dto';
 import { UpdateBottleDto } from './dto/update-bottle.dto';
 import { unlink } from 'fs';
@@ -20,11 +20,20 @@ export class BottlesService {
     }
 
     async findBottles(
+        contains: string,
         skip: number,
         take: number,
         order: any
     ): Promise<BottleEntity[]> {
-        return await this.bottleRepository.find({ skip, take, order });
+        return await this.bottleRepository.find({
+            skip, take, order, where: {
+                name: Like(`%${contains}%`)
+            }
+        });
+    }
+
+    async findAll(): Promise<BottleEntity[]> {
+        return await this.bottleRepository.find();
     }
 
     async createBottle(bottle: CreateBottleDto, imgBottle?: Express.Multer.File): Promise<BottleEntity> {
@@ -40,7 +49,7 @@ export class BottlesService {
         if (imgBottle) {
             // Delete old img
             if (bottle.img_name) {
-                this.deleteImgBottle(bottle.img_name)
+                this.deleteImgBottle(bottle.img_name);
             }
             bottle.img_original_name = imgBottle.originalname;
             bottle.img_name = imgBottle.filename;
@@ -60,7 +69,7 @@ export class BottlesService {
     async deleteBottle(id: string): Promise<UpdateResult> {
         let bottle = await this.bottleRepository.findOne({ id });
         if (bottle.img_name) {
-            this.deleteImgBottle(bottle.img_name)
+            this.deleteImgBottle(bottle.img_name);
         }
         return await this.bottleRepository.softDelete(id);
     }

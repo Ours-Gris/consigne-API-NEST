@@ -31,6 +31,7 @@ export class UsersController {
     @Roles(UserRole.ADMIN)
     @Get()
     async findUsers(
+        @Query('_contains', new DefaultValuePipe('')) contains,
         @Query('_sort', new DefaultValuePipe('username')) sortBy,
         @Query('_direction', new DefaultValuePipe('ASC')) sortDirection,
         @Query('_start', new DefaultValuePipe(0), ParseIntPipe) start,
@@ -39,7 +40,14 @@ export class UsersController {
         const order = {
             [sortBy]: sortDirection.toUpperCase()
         }
-        return await this.usersService.findUsers(start, limit, order);
+        return await this.usersService.findUsers(contains, start, limit, order);
+    }
+
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
+    @Get('export')
+    async findAll(): Promise<UserEntity[]>  {
+        return await this.usersService.findAllForExport();
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)

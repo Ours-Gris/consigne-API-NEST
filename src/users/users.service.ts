@@ -2,10 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, Like, Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthService } from '../auth/auth.service';
 import { AddressEntity } from './entities/address.entity';
+import { UserRole } from '../enums/user.role';
 
 @Injectable()
 export class UsersService {
@@ -26,15 +27,25 @@ export class UsersService {
     }
 
     async findUsers(
+        contains: string,
         skip: number,
         take: number,
         order: any
     ): Promise<UserEntity[]> {
-        return await this.userRepository.find({ skip, take, order});
+        return await this.userRepository.find({
+            skip, take, order,
+            relations: ['address', 'delivery_address'],
+            where: {
+                username: Like(`%${contains}%`)
+            }
+        });
     }
 
-    async findAllUsers(): Promise<UserEntity[]> {
-        return await this.userRepository.find();
+    async findAllForExport(): Promise<UserEntity[]> {
+        return await this.userRepository.find({
+            where: { role: UserRole.USER },
+            relations: ['address', 'delivery_address']
+        });
     }
 
     async createUser(user: CreateUserDto): Promise<UserEntity> {
