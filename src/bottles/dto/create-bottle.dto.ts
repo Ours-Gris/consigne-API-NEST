@@ -29,4 +29,12 @@ export class CreateBottleDto {
     @IsOptional()
     @IsString()
     img_name: string;
+
+    @IsOptional()
+    @IsString()
+    pdf_original_name: string;
+
+    @IsOptional()
+    @IsString()
+    pdf_name: string;
 }

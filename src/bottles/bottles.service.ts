@@ -4,7 +4,7 @@ import { BottleEntity } from './entities/bottle.entity';
 import { Like, Repository, UpdateResult } from 'typeorm';
 import { CreateBottleDto } from './dto/create-bottle.dto';
 import { UpdateBottleDto } from './dto/update-bottle.dto';
-import { unlink } from 'fs';
+import { existsSync, unlink } from 'fs';
 
 @Injectable()
 export class BottlesService {
@@ -36,23 +36,37 @@ export class BottlesService {
         return await this.bottleRepository.find();
     }
 
-    async createBottle(bottle: CreateBottleDto, imgBottle?: Express.Multer.File): Promise<BottleEntity> {
+    async createBottle(bottle: CreateBottleDto, imgBottle?: Express.Multer.File, pdfBottle?: Express.Multer.File): Promise<BottleEntity> {
         let newBottle = {
             ...bottle,
             img_original_name: imgBottle ? imgBottle.originalname : '',
-            img_name: imgBottle ? imgBottle.filename : ''
+            img_name: imgBottle ? imgBottle.filename : '',
+            pdf_original_name: pdfBottle ? pdfBottle.originalname : '',
+            pdf_name: pdfBottle ? pdfBottle.filename : ''
         };
         return await this.bottleRepository.save(newBottle);
     }
 
-    async updateBottle(id: string, bottle: UpdateBottleDto, imgBottle?: Express.Multer.File): Promise<BottleEntity> {
-        if (imgBottle) {
+    async updateBottle(
+        id: string,
+        bottle: UpdateBottleDto,
+        filesBottle?: { img_bottle?: Express.Multer.File[], pdf_bottle?: Express.Multer.File[] }
+    ): Promise<BottleEntity> {
+        if (filesBottle && filesBottle.img_bottle && filesBottle.img_bottle.length) {
             // Delete old img
             if (bottle.img_name) {
-                this.deleteImgBottle(bottle.img_name);
+                this.deleteFileBottle(bottle.img_name);
             }
-            bottle.img_original_name = imgBottle.originalname;
-            bottle.img_name = imgBottle.filename;
+            bottle.img_original_name = filesBottle.img_bottle[0].originalname;
+            bottle.img_name = filesBottle.img_bottle[0].filename;
+        }
+        if (filesBottle && filesBottle.pdf_bottle && filesBottle.pdf_bottle.length) {
+            // Delete old pdf
+            if (bottle.pdf_name) {
+                this.deleteFileBottle(bottle.pdf_name);
+            }
+            bottle.pdf_original_name = filesBottle.pdf_bottle[0].originalname;
+            bottle.pdf_name = filesBottle.pdf_bottle[0].filename;
         }
         // On récupére le bottle et on remplace les anciennes valeurs
         const targetBottle = await this.bottleRepository.preload({
@@ -69,21 +83,20 @@ export class BottlesService {
     async deleteBottle(id: string): Promise<UpdateResult> {
         let bottle = await this.bottleRepository.findOne({ id });
         if (bottle.img_name) {
-            this.deleteImgBottle(bottle.img_name);
+            this.deleteFileBottle(bottle.img_name);
         }
         return await this.bottleRepository.softDelete(id);
     }
 
-    deleteImgBottle(img_name: string): void {
-        unlink('./uploads/bottle/' + img_name, (err) => {
-            if (err) throw err;
-            console.log('./uploads/bottle/' + img_name + ' was deleted');
-        });
+    deleteFileBottle(fileName: string): void {
+        let filePath = process.env.PATH_FILES_BOTTLE + fileName;
+        if (existsSync(filePath)) {
+            unlink(filePath, (err) => {
+                if (err) throw err;
+                console.log(filePath + ' was deleted');
+            });
+        }
     }
-
-    // async restoreBottle(id: string): Promise<UpdateResult> {
-    //     return await this.bottleRepository.restore(id);
-    // }
 
     async countBottles(): Promise<Number> {
         return await this.bottleRepository.count();

@@ -2,12 +2,12 @@ import {
     Body,
     Controller,
     DefaultValuePipe, Delete,
-    Get,
+    Get, NotFoundException,
     Param,
     ParseIntPipe,
     Post,
     Put,
-    Query, Res, UploadedFile,
+    Query, Res, UploadedFile, UploadedFiles,
     UseGuards, UseInterceptors
 } from '@nestjs/common';
 import { BottlesService } from './bottles.service';
@@ -19,9 +19,10 @@ import { BottleEntity } from './entities/bottle.entity';
 import { CreateBottleDto } from './dto/create-bottle.dto';
 import { UpdateBottleDto } from './dto/update-bottle.dto';
 import { UpdateResult } from 'typeorm';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { imageFileFilter } from '../utils/file-upload.utils';
+import { fileFilter, pdfFileFilter } from '../utils/file-upload.utils';
+import { existsSync } from 'fs';
 
 @Controller('bottles')
 export class BottlesController {
@@ -50,7 +51,7 @@ export class BottlesController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
     @Get('export')
-    async findAll(): Promise<BottleEntity[]>  {
+    async findAll(): Promise<BottleEntity[]> {
         return await this.bottlesService.findAll();
     }
 
@@ -64,25 +65,47 @@ export class BottlesController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
     @Post()
-    @UseInterceptors(FileInterceptor('img_bottle', {
-        storage: diskStorage({ destination: './uploads/bottle/' }),
-        fileFilter: imageFileFilter
-    }))
-    async createBottle(@Body() newBottle: CreateBottleDto, @UploadedFile() imgBottle: Express.Multer.File): Promise<BottleEntity> {
-        console.log(imgBottle);
-        return await this.bottlesService.createBottle(newBottle, imgBottle);
+    @UseInterceptors(
+        FileInterceptor(
+            'img_bottle',
+            {
+                storage: diskStorage({ destination: process.env.PATH_FILES_BOTTLE }),
+                fileFilter: fileFilter
+            }))
+    @UseInterceptors(
+        FileInterceptor(
+            'pdf_bottle',
+            {
+                storage: diskStorage({ destination: process.env.PATH_FILES_BOTTLE }),
+                fileFilter: pdfFileFilter
+            }))
+    async createBottle(
+        @Body() newBottle: CreateBottleDto,
+        @UploadedFile() imgBottle: Express.Multer.File,
+        @UploadedFile() pdfBottle: Express.Multer.File
+    ): Promise<BottleEntity> {
+        return await this.bottlesService.createBottle(newBottle, imgBottle, pdfBottle);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
     @Put(':id')
-    @UseInterceptors(FileInterceptor('img_bottle', {
-        storage: diskStorage({ destination: './uploads/bottle/' }),
-        fileFilter: imageFileFilter
-    }))
-    async updateBottle(@Param('id') id: string, @Body() bottle: UpdateBottleDto, @UploadedFile() imgBottle: Express.Multer.File): Promise<BottleEntity> {
-        console.log(imgBottle);
-        return await this.bottlesService.updateBottle(id, bottle, imgBottle);
+    @UseInterceptors(
+        FileFieldsInterceptor(
+            [
+                { name: 'img_bottle', maxCount: 1 },
+                { name: 'pdf_bottle', maxCount: 1 }
+            ], {
+                storage: diskStorage({ destination: process.env.PATH_FILES_BOTTLE }),
+                fileFilter: fileFilter
+            }
+        ))
+    async updateBottle(
+        @Param('id') id: string,
+        @Body() bottle: UpdateBottleDto,
+        @UploadedFiles() filesBottle: { img_bottle?: Express.Multer.File[], pdf_bottle?: Express.Multer.File[] }
+    ): Promise<BottleEntity> {
+        return await this.bottlesService.updateBottle(id, bottle, filesBottle);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
@@ -92,9 +115,15 @@ export class BottlesController {
         return await this.bottlesService.deleteBottle(id);
     }
 
-    @Get('img/:imgPath')
-    seeUploadedFile(@Param('imgPath') image, @Res() res) {
-        return res.sendFile(image, { root: './uploads/bottle' });
+    @Get('file/:filePath')
+    seeUploadedFile(@Param('filePath') fileName, @Res() res) {
+        let filePath = process.env.PATH_FILES_BOTTLE + fileName;
+        if (existsSync(filePath)) {
+            return res.sendFile(fileName, {
+                root: process.env.PATH_FILES_BOTTLE
+            });
+        }
+        throw new NotFoundException();
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
