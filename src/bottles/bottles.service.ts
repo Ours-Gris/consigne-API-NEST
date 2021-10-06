@@ -36,13 +36,17 @@ export class BottlesService {
         return await this.bottleRepository.find();
     }
 
-    async createBottle(bottle: CreateBottleDto, imgBottle?: Express.Multer.File, pdfBottle?: Express.Multer.File): Promise<BottleEntity> {
+    async createBottle(bottle: CreateBottleDto, filesBottle?: { img_bottle?: Express.Multer.File[], pdf_bottle?: Express.Multer.File[] }): Promise<BottleEntity> {
+        if (filesBottle && filesBottle.img_bottle && filesBottle.img_bottle.length) {
+            bottle.img_original_name = filesBottle.img_bottle[0].originalname;
+            bottle.img_name = filesBottle.img_bottle[0].filename;
+        }
+        if (filesBottle && filesBottle.pdf_bottle && filesBottle.pdf_bottle.length) {
+            bottle.pdf_original_name = filesBottle.pdf_bottle[0].originalname;
+            bottle.pdf_name = filesBottle.pdf_bottle[0].filename;
+        }
         let newBottle = {
-            ...bottle,
-            img_original_name: imgBottle ? imgBottle.originalname : '',
-            img_name: imgBottle ? imgBottle.filename : '',
-            pdf_original_name: pdfBottle ? pdfBottle.originalname : '',
-            pdf_name: pdfBottle ? pdfBottle.filename : ''
+            ...bottle
         };
         return await this.bottleRepository.save(newBottle);
     }

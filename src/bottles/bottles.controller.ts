@@ -7,7 +7,7 @@ import {
     ParseIntPipe,
     Post,
     Put,
-    Query, Res, UploadedFile, UploadedFiles,
+    Query, Res, UploadedFiles,
     UseGuards, UseInterceptors
 } from '@nestjs/common';
 import { BottlesService } from './bottles.service';
@@ -19,9 +19,9 @@ import { BottleEntity } from './entities/bottle.entity';
 import { CreateBottleDto } from './dto/create-bottle.dto';
 import { UpdateBottleDto } from './dto/update-bottle.dto';
 import { UpdateResult } from 'typeorm';
-import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { fileFilter, pdfFileFilter } from '../utils/file-upload.utils';
+import { fileFilter } from '../utils/file-upload.utils';
 import { existsSync } from 'fs';
 
 @Controller('bottles')
@@ -66,25 +66,20 @@ export class BottlesController {
     @Roles(UserRole.ADMIN)
     @Post()
     @UseInterceptors(
-        FileInterceptor(
-            'img_bottle',
-            {
+        FileFieldsInterceptor(
+            [
+                { name: 'img_bottle', maxCount: 1 },
+                { name: 'pdf_bottle', maxCount: 1 }
+            ], {
                 storage: diskStorage({ destination: process.env.PATH_FILES_BOTTLE }),
                 fileFilter: fileFilter
-            }))
-    @UseInterceptors(
-        FileInterceptor(
-            'pdf_bottle',
-            {
-                storage: diskStorage({ destination: process.env.PATH_FILES_BOTTLE }),
-                fileFilter: pdfFileFilter
-            }))
+            }
+        ))
     async createBottle(
         @Body() newBottle: CreateBottleDto,
-        @UploadedFile() imgBottle: Express.Multer.File,
-        @UploadedFile() pdfBottle: Express.Multer.File
+        @UploadedFiles() filesBottle: { img_bottle?: Express.Multer.File[], pdf_bottle?: Express.Multer.File[] }
     ): Promise<BottleEntity> {
-        return await this.bottlesService.createBottle(newBottle, imgBottle, pdfBottle);
+        return await this.bottlesService.createBottle(newBottle, filesBottle);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
