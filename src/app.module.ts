@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { BottlesModule } from './bottles/bottles.module';
+import { MaterialModule } from './materials/material.module';
 
 @Module({
     imports: [
@@ -46,7 +47,8 @@ import { BottlesModule } from './bottles/bottles.module';
             }
         }),
         AuthModule,
-        BottlesModule
+        BottlesModule,
+        MaterialModule
     ],
     controllers: [AppController],
     providers: [AppService]
