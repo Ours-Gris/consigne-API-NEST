@@ -23,14 +23,20 @@ export class BottleEntity extends TimestampEntities {
     code!: string;
 
     @Column({
-        default: '0'
+        default: 0,
+        type: 'float'
     })
-    nbr_by_palette!: string;
+    price!: number;
 
     @Column({
-        default: '0'
+        default: 0
     })
-    internal_stock!: string;
+    nbr_by_palette!: number;
+
+    @Column({
+        default: 0
+    })
+    internal_stock!: number;
 
     @Column({
         nullable: true

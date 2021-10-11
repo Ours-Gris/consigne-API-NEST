@@ -24,6 +24,10 @@ export class CreateBottleDto {
 
     @IsOptional()
     @IsString()
+    price: string;
+
+    @IsOptional()
+    @IsString()
     img_original_name: string;
 
     @IsOptional()

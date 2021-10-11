@@ -46,7 +46,10 @@ export class BottlesService {
             bottle.pdf_name = filesBottle.pdf_bottle[0].filename;
         }
         let newBottle = {
-            ...bottle
+            ...bottle,
+            price: bottle.price ? Number(bottle.price) : 0,
+            nbr_by_palette: bottle.nbr_by_palette ? Number(bottle.nbr_by_palette) : 0,
+            internal_stock: bottle.internal_stock ? Number(bottle.internal_stock) : 0
         };
         return await this.bottleRepository.save(newBottle);
     }
@@ -75,7 +78,10 @@ export class BottlesService {
         // On récupére le bottle et on remplace les anciennes valeurs
         const targetBottle = await this.bottleRepository.preload({
             id,
-            ...bottle
+            ...bottle,
+            price: bottle.price ? Number(bottle.price) : 0,
+            nbr_by_palette: bottle.nbr_by_palette ? Number(bottle.nbr_by_palette) : 0,
+            internal_stock: bottle.internal_stock ? Number(bottle.internal_stock) : 0
         });
         // tester si le bottle avec cet id n'existe pas
         if (!targetBottle) {
