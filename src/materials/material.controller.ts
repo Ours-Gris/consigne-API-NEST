@@ -27,7 +27,7 @@ import { existsSync } from 'fs';
 export class MaterialController {
 
     constructor(
-        private readonly bottlesService: MaterialsService
+        private readonly materialsService: MaterialsService
     ) {
     }
 
@@ -44,21 +44,21 @@ export class MaterialController {
         const order = {
             [sortBy]: sortDirection.toUpperCase()
         };
-        return await this.bottlesService.findMaterials(contains, start, limit, order);
+        return await this.materialsService.findMaterials(contains, start, limit, order);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
     @Get('export')
     async findAll(): Promise<MaterialEntity[]> {
-        return await this.bottlesService.findAll();
+        return await this.materialsService.findAll();
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
     @Get('count')
     async countMaterials(): Promise<Number> {
-        return await this.bottlesService.countMaterials();
+        return await this.materialsService.countMaterials();
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
@@ -75,7 +75,7 @@ export class MaterialController {
         @Body() newMaterial: CreateMaterialDto,
         @UploadedFile() imgMaterial: Express.Multer.File
     ): Promise<MaterialEntity> {
-        return await this.bottlesService.createMaterial(newMaterial, imgMaterial);
+        return await this.materialsService.createMaterial(newMaterial, imgMaterial);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
@@ -95,14 +95,14 @@ export class MaterialController {
         @Body() bottle: UpdateMaterialDto,
         @UploadedFiles() filesMaterial: { img_material?: Express.Multer.File[] }
     ): Promise<MaterialEntity> {
-        return await this.bottlesService.updateMaterial(id, bottle, filesMaterial);
+        return await this.materialsService.updateMaterial(id, bottle, filesMaterial);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
     @Delete(':id')
     async deleteMaterial(@Param('id') id: string): Promise<UpdateResult> {
-        return await this.bottlesService.deleteMaterial(id);
+        return await this.materialsService.deleteMaterial(id);
     }
 
     @Get('file/:filePath')
@@ -120,6 +120,6 @@ export class MaterialController {
     @Roles(UserRole.ADMIN)
     @Get(':id')
     async findOneMaterial(@Param('id') id: string): Promise<MaterialEntity> {
-        return await this.bottlesService.findOneMaterialById(id);
+        return await this.materialsService.findOneMaterialById(id);
     }
 }

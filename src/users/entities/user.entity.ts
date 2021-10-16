@@ -1,8 +1,9 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { UserRole } from '../../enums/user.role';
 import { TimestampEntities } from '../../generics/timestamp.entities';
 import { UserStatus } from '../../enums/user.status';
 import { AddressEntity } from './address.entity';
+import { CollecteEntity } from '../../collectes/entities/collecte.entity';
 
 @Entity('user')
 export class UserEntity extends TimestampEntities {
@@ -108,4 +109,11 @@ export class UserEntity extends TimestampEntities {
     )
     @JoinColumn()
     delivery_address!: AddressEntity;
+
+    @OneToMany(
+        () => CollecteEntity,
+        collecte => collecte.user,
+        { nullable: true }
+    )
+    collectes!: CollecteEntity[];
 }
