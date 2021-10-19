@@ -3,7 +3,8 @@ import { UserRole } from '../../enums/user.role';
 import { TimestampEntities } from '../../generics/timestamp.entities';
 import { UserStatus } from '../../enums/user.status';
 import { AddressEntity } from './address.entity';
-import { CollecteEntity } from '../../collectes/entities/collecte.entity';
+import { PassageEntity } from '../../passages/entities/passage.entity';
+import { CollecteStatus } from '../../enums/collecte.status';
 
 @Entity('user')
 export class UserEntity extends TimestampEntities {
@@ -110,10 +111,18 @@ export class UserEntity extends TimestampEntities {
     @JoinColumn()
     delivery_address!: AddressEntity;
 
+
+    @Column({
+        type: 'enum',
+        enum: CollecteStatus,
+        default: CollecteStatus.NO_COLLECTE
+    })
+    collecte_status!: CollecteStatus;
+
     @OneToMany(
-        () => CollecteEntity,
-        collecte => collecte.user,
+        () => PassageEntity,
+        passage => passage.user,
         { nullable: true }
     )
-    collectes!: CollecteEntity[];
+    passages!: PassageEntity[];
 }
