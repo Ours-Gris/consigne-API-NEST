@@ -17,7 +17,7 @@ export class AuthService {
 
     async validateUser(email: string, enteredPassword: string): Promise<Partial<UserEntity>> {
         const user: UserEntity = await this.usersService.findOneUserByEmail(email);
-        if (!user) {
+        if (!user || !user.password) {
             return null;
         }
         const match = await AuthService.comparePassword(enteredPassword, user.password);
@@ -102,7 +102,7 @@ export class AuthService {
         return await bcrypt.hash(password, 10);
     }
 
-    private static async comparePassword(enteredPassword, dbPassword) {
+    private static async comparePassword(enteredPassword: string, dbPassword: string) {
         if (!enteredPassword) {
             return null
         }

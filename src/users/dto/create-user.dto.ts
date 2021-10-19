@@ -14,10 +14,6 @@ export class CreateUserDto {
     @IsEmail()
     readonly email: string;
 
-    // @IsOptional()
-    // @IsString()
-    // readonly password: string;
-
     @IsOptional()
     @IsString()
     readonly company: string;
@@ -45,6 +41,10 @@ export class CreateUserDto {
     @IsOptional()
     @IsBoolean()
     readonly producer!: boolean;
+
+    @IsOptional()
+    @IsBoolean()
+    readonly collecte_point!: boolean;
 
     @IsOptional()
     @IsString()

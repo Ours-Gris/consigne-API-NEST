@@ -53,6 +53,11 @@ export class UserEntity extends TimestampEntities {
     producer!: boolean;
 
     @Column({
+        default: false
+    })
+    collecte_point!: boolean;
+
+    @Column({
         nullable: true
     })
     company!: string;

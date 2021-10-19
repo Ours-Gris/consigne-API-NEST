@@ -3,6 +3,7 @@ import { UserRole } from '../../enums/user.role';
 import { UserStatus } from '../../enums/user.status';
 import { Type } from 'class-transformer';
 import { UpdateAddressDto } from './update-address.dto';
+import { CollecteStatus } from '../../enums/collecte.status';
 
 export class UpdateUserDto {
 
@@ -52,6 +53,10 @@ export class UpdateUserDto {
     readonly producer: boolean;
 
     @IsOptional()
+    @IsBoolean()
+    readonly collecte_point: boolean;
+
+    @IsOptional()
     @IsString()
     readonly delivery_schedules!: string;
 
@@ -78,4 +83,8 @@ export class UpdateUserDto {
     @IsOptional()
     @IsString()
     readonly internal_data!: string;
+
+    @IsOptional()
+    @IsEnum(CollecteStatus)
+    readonly collecte_status!: CollecteStatus;
 }
