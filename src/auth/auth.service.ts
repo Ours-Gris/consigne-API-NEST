@@ -69,7 +69,7 @@ export class AuthService {
         const token = await this.generateToken(user);
         const forgotLink = `${process.env.APP_CORS_ORIGIN}/auth/new-password?token=${token}`;
 
-        return await this.mailerService.sendMail({
+        return this.mailerService.sendMail({
             to: user.email,
             subject: 'Forgot Password',
             text: `Please use this ${forgotLink} to reset your password.`,
@@ -77,7 +77,11 @@ export class AuthService {
                 <h3>Hello ${user.username}!</h3>
                 <p>Please use this <a href="${forgotLink}">link</a> to reset your password.</p>
             `
-        });
+        }).then(
+            res =>{
+                return !!res.accepted.length
+            }
+        )
     }
 
     public async confirm(user: UserEntity) {

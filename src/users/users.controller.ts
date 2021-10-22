@@ -45,6 +45,22 @@ export class UsersController {
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
+    @Get('waiting')
+    async findUsersWaitingPassage(
+        @Query('_contains', new DefaultValuePipe('')) contains,
+        @Query('_sort', new DefaultValuePipe('collecte_status')) sortBy,
+        @Query('_direction', new DefaultValuePipe('DESC')) sortDirection,
+        @Query('_start', new DefaultValuePipe(0), ParseIntPipe) start,
+        @Query('_limit', new DefaultValuePipe(3), ParseIntPipe) limit
+    ): Promise<UserEntity[]> {
+        const order = {
+            [sortBy]: sortDirection.toUpperCase()
+        }
+        return await this.usersService.findUsersWaitingPassage(contains, start, limit, order);
+    }
+
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
     @Get('export')
     async findAll(): Promise<UserEntity[]>  {
         return await this.usersService.findAllForExport();
@@ -54,7 +70,15 @@ export class UsersController {
     @Roles(UserRole.ADMIN)
     @Get('count')
     async countUsers(): Promise<Number> {
+        //TODO filter sur le count ?
         return await this.usersService.countUsers();
+    }
+
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
+    @Get('waiting/count')
+    async countUsersWaiting(): Promise<Number> {
+        return await this.usersService.countUsersWaiting();
     }
 
     // @UseGuards(JwtAuthGuard, EmailUniqueGuard, RolesGuard)

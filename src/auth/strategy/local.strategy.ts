@@ -14,7 +14,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     async validate(email: string, password: string): Promise<Partial<UserEntity>> {
         const user = await this.authService.validateUser(email, password);
         if (!user) {
-            throw new UnauthorizedException('il est oú le User ?');
+            throw new UnauthorizedException('mdp invalide');
         }
         if (user.status === UserStatus.PENDING) {
             throw new UnauthorizedException('You need to validate your mail');

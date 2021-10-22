@@ -30,36 +30,14 @@ export class PassageController {
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
-    @Get('waiting')
-    async findPassages(
-        @Query('_sort', new DefaultValuePipe('status')) sortBy,
-        @Query('_direction', new DefaultValuePipe('ASC')) sortDirection,
-        @Query('_start', new DefaultValuePipe(0), ParseIntPipe) start,
-        @Query('_limit', new DefaultValuePipe(3), ParseIntPipe) limit
-    ): Promise<PassageEntity[]> {
-        const order = {
-            [sortBy]: sortDirection.toUpperCase()
-        };
-        return await this.passageService.findWaitingPassages(start, limit, order);
-    }
-
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(UserRole.ADMIN)
     @Get('export')
     async findAll(): Promise<PassageEntity[]> {
         return await this.passageService.findAll();
     }
 
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(UserRole.ADMIN)
-    @Get('waiting/count')
-    async countWaitingPassages(): Promise<Number> {
-        return await this.passageService.countWaitingPassages();
-    }
-
     @UseGuards(JwtAuthGuard)
     @Get('count/me')
-    async countMyPassages(@User() payload: PayloadInterface,): Promise<Number> {
+    async countMyPassages(@User() payload: PayloadInterface): Promise<Number> {
         return await this.passageService.countUserPassages(payload.sub);
     }
 

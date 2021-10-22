@@ -36,17 +36,6 @@ export class PassageService {
         return await this.passageRepository.find({ skip, take, order });
     }
 
-    async findWaitingPassages(
-        skip: number,
-        take: number,
-        order: any
-    ): Promise<PassageEntity[]> {
-        return await this.passageRepository.find({
-            skip, take, order,
-            relations: ['user']
-        });
-    }
-
     async findAll(): Promise<PassageEntity[]> {
         return await this.passageRepository.find();
     }
@@ -76,10 +65,6 @@ export class PassageService {
     }
 
     async countPassages(): Promise<Number> {
-        return await this.passageRepository.count();
-    }
-
-    async countWaitingPassages(): Promise<Number> {
         return await this.passageRepository.count();
     }
 
