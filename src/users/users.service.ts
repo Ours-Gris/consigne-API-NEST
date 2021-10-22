@@ -2,11 +2,12 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
-import { DeleteResult, Like, Repository } from 'typeorm';
+import { DeleteResult, Like, Repository, In } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthService } from '../auth/auth.service';
 import { AddressEntity } from './entities/address.entity';
 import { UserRole } from '../enums/user.role';
+import { CollecteStatus } from '../enums/collecte.status';
 
 @Injectable()
 export class UsersService {
@@ -41,6 +42,23 @@ export class UsersService {
         });
     }
 
+    async findUsersWaitingPassage(
+        contains: string,
+        skip: number,
+        take: number,
+        order: any
+    ): Promise<UserEntity[]> {
+        return await this.userRepository.find({
+            skip, take, order,
+            relations: ['address', 'delivery_address'],
+            where: {
+                collecte_point: true,
+                collecte_status: In([CollecteStatus.FULL, CollecteStatus.ALMOST_FULL]),
+                username: Like(`%${contains}%`)
+            }
+        });
+    }
+
     async findAllForExport(): Promise<UserEntity[]> {
         return await this.userRepository.find({
             where: { role: UserRole.USER },
@@ -69,8 +87,8 @@ export class UsersService {
         if (!targetUser) {
             throw new NotFoundException();
         }
-        if (targetUser.password) {
-            targetUser.password = await AuthService.hashPassword(targetUser.password);
+        if (user.password) {
+            targetUser.password = await AuthService.hashPassword(user.password);
         }
         if (targetUser.address) {
             await this.addressRepository.save(targetUser.address)
@@ -87,5 +105,14 @@ export class UsersService {
 
     async countUsers(): Promise<Number> {
         return await this.userRepository.count();
+    }
+
+    async countUsersWaiting(): Promise<Number> {
+        return await this.userRepository.count({
+            where: {
+                collecte_point: true,
+                collecte_status: In([CollecteStatus.FULL, CollecteStatus.ALMOST_FULL]),
+            }
+        });
     }
 }
