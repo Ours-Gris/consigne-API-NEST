@@ -93,6 +93,13 @@ export class PassageController {
         return await this.passageService.findOnePassageById(id);
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
+    @Get()
+    async findAllPassage(): Promise<PassageEntity[]> {
+        return await this.passageService.findAll();
+    }
+
     @UseGuards(JwtAuthGuard)
     @Post('me')
     async createMyPassage(@User() payload: PayloadInterface, @Body() newPassage: CreatePassageDto): Promise<PassageEntity> {

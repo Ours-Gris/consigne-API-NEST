@@ -37,7 +37,11 @@ export class PassageService {
     }
 
     async findAll(): Promise<PassageEntity[]> {
-        return await this.passageRepository.find();
+        return await this.passageRepository.find({
+            order: {
+                createdAt: 'ASC'
+            }
+        });
     }
 
     async createPassage(passage: CreatePassageDto): Promise<PassageEntity> {
