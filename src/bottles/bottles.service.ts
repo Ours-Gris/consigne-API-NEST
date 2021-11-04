@@ -49,7 +49,8 @@ export class BottlesService {
             ...bottle,
             price: bottle.price ? Number(bottle.price) : 0,
             nbr_by_palette: bottle.nbr_by_palette ? Number(bottle.nbr_by_palette) : 0,
-            internal_stock: bottle.internal_stock ? Number(bottle.internal_stock) : 0
+            internal_stock: bottle.internal_stock ? Number(bottle.internal_stock) : 0,
+            internal_stock_dirty: bottle.internal_stock_dirty ? Number(bottle.internal_stock_dirty) : 0
         };
         return await this.bottleRepository.save(newBottle);
     }
@@ -81,7 +82,8 @@ export class BottlesService {
             ...bottle,
             price: bottle.price ? Number(bottle.price) : 0,
             nbr_by_palette: bottle.nbr_by_palette ? Number(bottle.nbr_by_palette) : 0,
-            internal_stock: bottle.internal_stock ? Number(bottle.internal_stock) : 0
+            internal_stock: bottle.internal_stock ? Number(bottle.internal_stock) : 0,
+            internal_stock_dirty: bottle.internal_stock_dirty ? Number(bottle.internal_stock_dirty) : 0
         });
         // tester si le bottle avec cet id n'existe pas
         if (!targetBottle) {

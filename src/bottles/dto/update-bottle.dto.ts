@@ -24,6 +24,10 @@ export class UpdateBottleDto {
 
     @IsOptional()
     @IsString()
+    readonly internal_stock_dirty: string;
+
+    @IsOptional()
+    @IsString()
     price: string;
 
     @IsOptional()

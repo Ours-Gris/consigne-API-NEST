@@ -22,6 +22,10 @@ export class CreateBottleDto {
     @IsString()
     readonly internal_stock: string;
 
+    @IsNotEmpty()
+    @IsString()
+    readonly internal_stock_dirty: string;
+
     @IsOptional()
     @IsString()
     price: string;
