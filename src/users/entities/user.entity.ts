@@ -127,7 +127,9 @@ export class UserEntity extends TimestampEntities {
     @OneToMany(
         () => PassageEntity,
         passage => passage.user,
-        { nullable: true }
+        {
+            nullable: true
+        }
     )
     passages!: PassageEntity[];
 }

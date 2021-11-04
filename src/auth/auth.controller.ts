@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthService } from './auth.service';
 import { User } from '../decorators/user.decorator';
@@ -16,6 +16,13 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 export class AuthController {
     constructor(private authService: AuthService) {}
 
+    @UseGuards(JwtAuthGuard, EmailUniqueGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
+    @Get('welcome/:id')
+    async sendConfirm(@Param('id') id: string) {
+        return await this.authService.sendWelcome(id);
+    }
+
     @UseGuards(LocalAuthGuard)
     @Post('login')
     async login(@User() user) {
@@ -25,7 +32,7 @@ export class AuthController {
     @UseGuards(JwtAuthGuard, EmailUniqueGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
     @Post('add')
-    async signUp(@Body() user: CreateUserDto) {
+    async signUp(@Body() user: CreateUserDto): Promise<CreateUserDto> {
         return await this.authService.addUser(user);
     }
 

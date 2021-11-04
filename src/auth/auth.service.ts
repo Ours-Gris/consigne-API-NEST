@@ -46,12 +46,12 @@ export class AuthService {
         });
     }
 
-    public async addUser(user: CreateUserDto) {
-        const newUser = await this.usersService.createUser(user);
-        return await this.sendWelcome(newUser)
+    public async addUser(user: CreateUserDto): Promise<CreateUserDto> {
+        return await this.usersService.createUser(user)
     }
 
-    public async sendWelcome(user: UserEntity) {
+    public async sendWelcome(id: string) {
+        const user = await this.usersService.findOneUserById(id);
         const token = await this.generateToken(user);
         const forgotLink = `${process.env.APP_CORS_ORIGIN}/auth/new-password?welcome=true&token=${token}`;
 

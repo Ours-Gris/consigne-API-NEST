@@ -17,7 +17,11 @@ export class PassageEntity extends TimestampEntities {
     @ManyToOne(
         () => UserEntity,
         user => user.passages,
-        { nullable: false})
+        {
+            nullable: false,
+            onUpdate: 'CASCADE',
+            onDelete: 'CASCADE'
+        })
     @JoinColumn()
     user!: UserEntity;
 }
