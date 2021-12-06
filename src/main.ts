@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import * as morgan from 'morgan';
+// import * as morgan from 'morgan';
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
@@ -16,7 +16,7 @@ async function bootstrap() {
     app.enableCors();
 
     // Middleware pour afficher les logs
-    app.use(morgan('dev'));
+    // app.use(morgan('dev'));
 
     // Les Validateurs modifis le type et filtre les champs non attendus
     app.useGlobalPipes(new ValidationPipe({
