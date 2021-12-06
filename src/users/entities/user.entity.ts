@@ -5,6 +5,7 @@ import { UserStatus } from '../../enums/user.status';
 import { AddressEntity } from './address.entity';
 import { PassageEntity } from '../../passages/entities/passage.entity';
 import { CollecteStatus } from '../../enums/collecte.status';
+import { OrderEntity } from '../../orders/entities/order.entity';
 
 @Entity('user')
 export class UserEntity extends TimestampEntities {
@@ -132,4 +133,13 @@ export class UserEntity extends TimestampEntities {
         }
     )
     passages!: PassageEntity[];
+
+    @OneToMany(
+        () => OrderEntity,
+        order => order.user,
+        {
+            nullable: true
+        }
+    )
+    orders!: OrderEntity[];
 }

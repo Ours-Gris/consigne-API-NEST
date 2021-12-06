@@ -36,3 +36,4 @@ lerna-debug.log*
 /uploads/bottle/
 .htaccess
 truc de config/
+/.infomaniak-maintenance.html

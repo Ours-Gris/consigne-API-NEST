@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { TimestampEntities } from '../../generics/timestamp.entities';
+import { ItemEntity } from '../../orders/entities/item.entity';
 
 @Entity('materials')
 export class MaterialEntity extends TimestampEntities {
@@ -41,4 +42,10 @@ export class MaterialEntity extends TimestampEntities {
         nullable: true
     })
     img_name!: string;
+
+    @ManyToOne(
+        () => ItemEntity,
+        item => item.material
+    )
+    items: ItemEntity[];
 }
