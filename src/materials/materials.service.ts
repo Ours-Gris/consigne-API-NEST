@@ -4,7 +4,7 @@ import { MaterialEntity } from './entities/material.entity';
 import { Like, Repository, UpdateResult } from 'typeorm';
 import { CreateMaterialDto } from './dto/create-material.dto';
 import { UpdateMaterialDto } from './dto/update-material.dto';
-import { existsSync, unlink } from 'fs';
+import { deleteFile } from '../utils/file-upload.utils';
 
 @Injectable()
 export class MaterialsService {
@@ -49,16 +49,18 @@ export class MaterialsService {
     async updateMaterial(
         id: string,
         material: UpdateMaterialDto,
-        filesMaterial?: { img_material?: Express.Multer.File[] }
+        fileMulter?: Express.Multer.File
     ): Promise<MaterialEntity> {
-        console.log(filesMaterial)
-        if (filesMaterial && filesMaterial.img_material && filesMaterial.img_material.length) {
+        if (fileMulter) {
+            if (!fileMulter.filename) {
+                throw new NotFoundException();
+            }
             // Delete old img
             if (material.img_name) {
-                this.deleteFileMaterial(material.img_name);
+                deleteFile(process.env.PATH_FILES_MATERIAL, material.img_name);
             }
-            material.img_original_name = filesMaterial.img_material[0].originalname;
-            material.img_name = filesMaterial.img_material[0].filename;
+            material.img_original_name = fileMulter.originalname;
+            material.img_name = fileMulter.filename;
         }
         // On récupére le material et on remplace les anciennes valeurs
         const targetMaterial = await this.materialRepository.preload({
@@ -76,19 +78,9 @@ export class MaterialsService {
     async deleteMaterial(id: string): Promise<UpdateResult> {
         let material = await this.materialRepository.findOne({ id });
         if (material.img_name) {
-            this.deleteFileMaterial(material.img_name);
+            deleteFile(process.env.PATH_FILES_MATERIAL, material.img_name);
         }
         return await this.materialRepository.softDelete(id);
-    }
-
-    deleteFileMaterial(fileName: string): void {
-        let filePath = process.env.PATH_FILES_MATERIAL + fileName;
-        if (existsSync(filePath)) {
-            unlink(filePath, (err) => {
-                if (err) throw err;
-                console.log(filePath + ' was deleted');
-            });
-        }
     }
 
     async countMaterials(): Promise<Number> {

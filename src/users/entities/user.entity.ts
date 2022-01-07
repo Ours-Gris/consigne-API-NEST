@@ -25,7 +25,8 @@ export class UserEntity extends TimestampEntities {
     email!: string;
 
     @Column({
-        nullable: true
+        nullable: true,
+        select: false
     })
     password!: string;
 
@@ -66,6 +67,11 @@ export class UserEntity extends TimestampEntities {
     @Column({
         nullable: true
     })
+    description!: string;
+
+    @Column({
+        nullable: true
+    })
     tel!: string;
 
     @Column({
@@ -99,9 +105,20 @@ export class UserEntity extends TimestampEntities {
     pallet_truck!: boolean;
 
     @Column({
-        nullable: true
+        nullable: true,
+        select: false
     })
     internal_data!: string;
+
+    @Column({
+        nullable: true
+    })
+    img_original_name!: string;
+
+    @Column({
+        nullable: true
+    })
+    img_name!: string;
 
     @OneToOne(
         () => AddressEntity,
@@ -116,7 +133,6 @@ export class UserEntity extends TimestampEntities {
     )
     @JoinColumn()
     delivery_address!: AddressEntity;
-
 
     @Column({
         type: 'enum',

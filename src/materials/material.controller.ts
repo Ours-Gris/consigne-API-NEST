@@ -5,7 +5,7 @@ import {
     Get, NotFoundException, Param,
     ParseIntPipe,
     Post, Put,
-    Query, Res, UploadedFile, UploadedFiles,
+    Query, Res, UploadedFile,
     UseGuards,
     UseInterceptors
 } from '@nestjs/common';
@@ -15,8 +15,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../decorators/roles.decorator';
 import { UserRole } from '../enums/user.role';
 import { MaterialEntity } from './entities/material.entity';
-import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { fileFilter } from '../utils/file-upload.utils';
 import { CreateMaterialDto } from './dto/create-material.dto';
 import { UpdateMaterialDto } from './dto/update-material.dto';
@@ -68,7 +67,6 @@ export class MaterialController {
         FileInterceptor(
             'img_material',
             {
-                storage: diskStorage({ destination: process.env.PATH_FILES_MATERIAL }),
                 fileFilter: fileFilter
             }))
     async createMaterial(
@@ -82,20 +80,17 @@ export class MaterialController {
     @Roles(UserRole.ADMIN)
     @Put(':id')
     @UseInterceptors(
-        FileFieldsInterceptor(
-            [
-                { name: 'img_material', maxCount: 1 }
-            ], {
-                storage: diskStorage({ destination: process.env.PATH_FILES_MATERIAL }),
+        FileInterceptor(
+            'img_material',
+            {
                 fileFilter: fileFilter
-            }
-        ))
+            }))
     async updateMaterial(
         @Param('id') id: string,
         @Body() bottle: UpdateMaterialDto,
-        @UploadedFiles() filesMaterial: { img_material?: Express.Multer.File[] }
+        @UploadedFile() fileMaterial: Express.Multer.File
     ): Promise<MaterialEntity> {
-        return await this.materialsService.updateMaterial(id, bottle, filesMaterial);
+        return await this.materialsService.updateMaterial(id, bottle, fileMaterial);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)

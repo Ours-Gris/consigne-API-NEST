@@ -19,6 +19,10 @@ export class CreateUserDto {
     readonly company: string;
 
     @IsOptional()
+    @IsString()
+    readonly description: string;
+
+    @IsOptional()
     @Type(() => CreateAddressDto)
     readonly address!: CreateAddressDto;
 
@@ -73,4 +77,12 @@ export class CreateUserDto {
     @IsOptional()
     @IsString()
     readonly internal_data!: string;
+
+    @IsOptional()
+    @IsString()
+    img_original_name: string;
+
+    @IsOptional()
+    @IsString()
+    img_name: string;
 }

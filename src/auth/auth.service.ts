@@ -5,7 +5,6 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserStatus } from '../enums/user.status';
 import { MailerService } from '@nestjs-modules/mailer';
-import { CreateUserDto } from '../users/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -44,10 +43,6 @@ export class AuthService {
                 <p>Please use this <a href="${confirmLink}">link</a> to confirm your account.</p>
             `,
         });
-    }
-
-    public async addUser(user: CreateUserDto): Promise<CreateUserDto> {
-        return await this.usersService.createUser(user)
     }
 
     public async sendWelcome(id: string) {

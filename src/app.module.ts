@@ -9,6 +9,7 @@ import { BottlesModule } from './bottles/bottles.module';
 import { MaterialModule } from './materials/material.module';
 import { PassageModule } from './passages/passage.module';
 import { OrdersModule } from './orders/orders.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
     imports: [
@@ -47,6 +48,7 @@ import { OrdersModule } from './orders/orders.module';
             }
         }),
         AuthModule,
+        UsersModule,
         BottlesModule,
         MaterialModule,
         PassageModule,

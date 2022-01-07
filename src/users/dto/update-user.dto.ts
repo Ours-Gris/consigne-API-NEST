@@ -26,6 +26,10 @@ export class UpdateUserDto {
 
     @IsOptional()
     @IsString()
+    readonly description: string;
+
+    @IsOptional()
+    @IsString()
     readonly tel!: string;
 
     @IsOptional()
@@ -87,4 +91,12 @@ export class UpdateUserDto {
     @IsOptional()
     @IsEnum(CollecteStatus)
     readonly collecte_status!: CollecteStatus;
+
+    @IsOptional()
+    @IsString()
+    img_original_name: string;
+
+    @IsOptional()
+    @IsString()
+    img_name: string;
 }
