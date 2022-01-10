@@ -187,16 +187,21 @@ export class UsersController {
         return await this.usersService.deleteUser(id);
     }
 
+    @Get('public')
+    async findAllUserPublic(): Promise<UserEntity[]> {
+        return await this.usersService.findAllPublicUsers();
+    }
+
+    @Get('public/:id')
+    async findOneUserPublic(@Param('id') id: string): Promise<UserEntity> {
+        return await this.usersService.findOnePublicUser(id);
+    }
+
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
     @Get(':id')
     async findOneUser(@Param('id') id: string): Promise<UserEntity> {
         return await this.usersService.findOneUserById(id);
-    }
-
-    @Get('public/:id')
-    async findOneUserPublic(@Param('id') id: string): Promise<UserEntity> {
-        return await this.usersService.findUserPublic(id);
     }
 
     @Get('file/:filePath')

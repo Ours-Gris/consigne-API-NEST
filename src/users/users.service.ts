@@ -9,6 +9,7 @@ import { AddressEntity } from './entities/address.entity';
 import { UserRole } from '../enums/user.role';
 import { CollecteStatus } from '../enums/collecte.status';
 import { deleteFile } from '../utils/file-upload.utils';
+import { UserStatus } from '../enums/user.status';
 
 @Injectable()
 export class UsersService {
@@ -25,9 +26,21 @@ export class UsersService {
     }
 
     // ToDo voir les valeur à retourner
-    async findUserPublic(id: string): Promise<UserEntity> {
+    async findOnePublicUser(id: string): Promise<UserEntity> {
         return await this.userRepository.findOne({ id }, {
             relations: ['address', 'delivery_address']
+            // select: []
+        });
+    }
+
+    // ToDo voir les valeur à retourner
+    async findAllPublicUsers(): Promise<UserEntity[]> {
+        return await this.userRepository.find({
+            where:{
+                role: UserRole.USER,
+                status: UserStatus.ACTIVE
+            },
+            relations: ['address', 'delivery_address'],
             // select: []
         });
     }

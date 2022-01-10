@@ -120,6 +120,16 @@ export class UserEntity extends TimestampEntities {
     })
     img_name!: string;
 
+    @Column({
+        nullable: true
+    })
+    lat!: string;
+
+    @Column({
+        nullable: true
+    })
+    lon!: string;
+
     @OneToOne(
         () => AddressEntity,
         { nullable: true }

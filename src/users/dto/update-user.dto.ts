@@ -99,4 +99,12 @@ export class UpdateUserDto {
     @IsOptional()
     @IsString()
     img_name: string;
+
+    @IsOptional()
+    @IsString()
+    lat: string;
+
+    @IsOptional()
+    @IsString()
+    lon: string;
 }
