@@ -12,7 +12,7 @@ import { MulterModule } from '@nestjs/platform-express';
             isGlobal: true
         }),
         TypeOrmModule.forFeature([MaterialEntity]),
-        MulterModule.register({ dest: process.env.PATH_FILES_MATERIAL }),
+        MulterModule.register({ dest: process.env.PATH_FILES_MATERIAL })
     ],
     providers: [MaterialsService],
     controllers: [MaterialController]

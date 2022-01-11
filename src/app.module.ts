@@ -10,6 +10,8 @@ import { MaterialModule } from './materials/material.module';
 import { PassageModule } from './passages/passage.module';
 import { OrdersModule } from './orders/orders.module';
 import { UsersModule } from './users/users.module';
+import { FaqModule } from './faq/faq.module';
+import { NewsModule } from './news/news.module';
 
 @Module({
     imports: [
@@ -52,7 +54,9 @@ import { UsersModule } from './users/users.module';
         BottlesModule,
         MaterialModule,
         PassageModule,
-        OrdersModule
+        OrdersModule,
+        FaqModule,
+        NewsModule
     ],
     controllers: [AppController]
 })
