@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { TimestampEntities } from '../../generics/timestamp.entities';
-import { DeliveryStatus } from '../../enums/delivery.status';
+import { OrderStatus } from '../../enums/order.status';
 import { UserEntity } from '../../users/entities/user.entity';
 import { ItemEntity } from './item.entity';
 
@@ -11,9 +11,9 @@ export class OrderEntity extends TimestampEntities {
     id!: string;
 
     @Column({
-        default: DeliveryStatus.PENDING
+        default: OrderStatus.PENDING_VALIDATION
     })
-    delivery_status!: DeliveryStatus;
+    order_status!: OrderStatus;
 
     @OneToMany(
         () => ItemEntity,
@@ -23,7 +23,12 @@ export class OrderEntity extends TimestampEntities {
 
     @ManyToOne(
         () => UserEntity,
-        user => user.orders
+        user => user.orders,
+        {
+            nullable: false,
+            onUpdate: 'CASCADE',
+            onDelete: 'CASCADE'
+        }
     )
     user: UserEntity;
 }

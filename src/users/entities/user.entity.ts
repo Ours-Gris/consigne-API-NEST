@@ -167,5 +167,6 @@ export class UserEntity extends TimestampEntities {
             nullable: true
         }
     )
+    @JoinColumn()
     orders!: OrderEntity[];
 }

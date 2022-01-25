@@ -30,8 +30,7 @@ export class MaterialController {
     ) {
     }
 
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(UserRole.ADMIN)
+    @UseGuards(JwtAuthGuard)
     @Get()
     async findMaterials(
         @Query('name_contains', new DefaultValuePipe('')) contains,
@@ -111,8 +110,7 @@ export class MaterialController {
         throw new NotFoundException();
     }
 
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(UserRole.ADMIN)
+    @UseGuards(JwtAuthGuard)
     @Get(':id')
     async findOneMaterial(@Param('id') id: string): Promise<MaterialEntity> {
         return await this.materialsService.findOneMaterialById(id);

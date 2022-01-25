@@ -27,7 +27,12 @@ export class ItemEntity extends TimestampEntities {
 
     @ManyToOne(
         () => OrderEntity,
-        order => order.items
+        order => order.items,
+        {
+            nullable: false,
+            onUpdate: 'CASCADE',
+            onDelete: 'CASCADE'
+        }
     )
     order: OrderEntity;
 }
