@@ -5,6 +5,7 @@ import { OrderEntity } from './entities/order.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { ItemEntity } from './entities/item.entity';
+import { PayloadInterface } from '../users/interfaces/payload.interface';
 
 @Injectable()
 export class OrdersService {
@@ -45,11 +46,9 @@ export class OrdersService {
         });
     }
 
-    async createOrder(order: CreateOrderDto): Promise<OrderEntity> {
-        if (order.items.length) {
-            await this.itemRepository.save(order.items);
-        }
-        return await this.orderRepository.save(order);
+    async createOrder(payload: PayloadInterface, order: CreateOrderDto): Promise<OrderEntity> {
+        order.user.id = payload.sub
+        return  await this.orderRepository.save(order);
     }
 
     async updateOrder(

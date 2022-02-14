@@ -82,9 +82,16 @@ export class UsersController {
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
-    @Get('waiting/count')
-    async countUsersWaiting(): Promise<Number> {
-        return await this.usersService.countUsersWaiting();
+    @Get('waiting-passage/count')
+    async countUsersWaitingPassage(): Promise<Number> {
+        return await this.usersService.countUsersWaitingPassage();
+    }
+
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
+    @Get('waiting-order/count')
+    async countUsersWaitingOrder(): Promise<Number> {
+        return await this.usersService.countUsersWaitingOrder();
     }
 
     @UseGuards(JwtAuthGuard, EmailUniqueGuard, RolesGuard)

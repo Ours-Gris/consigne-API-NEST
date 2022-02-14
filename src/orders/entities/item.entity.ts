@@ -29,7 +29,6 @@ export class ItemEntity extends TimestampEntities {
         () => OrderEntity,
         order => order.items,
         {
-            nullable: false,
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE'
         }

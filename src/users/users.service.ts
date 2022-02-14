@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
-import { DeleteResult, Like, Repository, In } from 'typeorm';
+import { DeleteResult, In, Like, Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthService } from '../auth/auth.service';
 import { AddressEntity } from './entities/address.entity';
@@ -10,6 +10,7 @@ import { UserRole } from '../enums/user.role';
 import { CollecteStatus } from '../enums/collecte.status';
 import { deleteFile } from '../utils/file-upload.utils';
 import { UserStatus } from '../enums/user.status';
+import { OrderStatus } from '../enums/order.status';
 
 @Injectable()
 export class UsersService {
@@ -36,11 +37,11 @@ export class UsersService {
     // ToDo voir les valeur à retourner
     async findAllPublicUsers(): Promise<UserEntity[]> {
         return await this.userRepository.find({
-            where:{
+            where: {
                 role: UserRole.USER,
                 status: UserStatus.ACTIVE
             },
-            relations: ['address', 'delivery_address'],
+            relations: ['address', 'delivery_address']
             // select: []
         });
     }
@@ -176,11 +177,20 @@ export class UsersService {
         return await this.userRepository.count({ where });
     }
 
-    async countUsersWaiting(): Promise<Number> {
+    async countUsersWaitingPassage(): Promise<Number> {
         return await this.userRepository.count({
             where: {
                 collecte_point: true,
                 collecte_status: In([CollecteStatus.FULL, CollecteStatus.ALMOST_FULL])
+            }
+        });
+    }
+
+    async countUsersWaitingOrder(): Promise<Number> {
+        return await this.userRepository.count({
+            join: { alias: 'users', innerJoin: { orders: 'users.orders' } },
+            where: qb => {
+                qb.where('orders.order_status IN (:...status)', { status: [OrderStatus.PENDING_VALIDATION, OrderStatus.PENDING_DELIVERY] });
             }
         });
     }

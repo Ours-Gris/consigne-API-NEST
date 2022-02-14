@@ -85,11 +85,12 @@ export class OrdersController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Post()
+    @Post('me')
     async createOrder(
+        @User() payload: PayloadInterface,
         @Body() newOrder: CreateOrderDto
     ): Promise<OrderEntity> {
-        return await this.ordersService.createOrder(newOrder);
+        return await this.ordersService.createOrder(payload, newOrder);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)

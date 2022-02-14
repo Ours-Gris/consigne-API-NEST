@@ -17,7 +17,12 @@ export class OrderEntity extends TimestampEntities {
 
     @OneToMany(
         () => ItemEntity,
-        item => item.order
+        item => item.order,
+        {
+            cascade: ['insert'],
+            onUpdate: 'CASCADE',
+            onDelete: 'CASCADE'
+        }
     )
     items: ItemEntity[];
 
@@ -25,7 +30,6 @@ export class OrderEntity extends TimestampEntities {
         () => UserEntity,
         user => user.orders,
         {
-            nullable: false,
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE'
         }
