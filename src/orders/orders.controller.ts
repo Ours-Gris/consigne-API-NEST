@@ -43,6 +43,19 @@ export class OrdersController {
         return await this.ordersService.getUserOrders(payload.sub);
     }
 
+    @Get()
+    async findOrders(
+        @Query('_sort', new DefaultValuePipe('name')) sortBy,
+        @Query('_direction', new DefaultValuePipe('ASC')) sortDirection,
+        @Query('_start', new DefaultValuePipe(0), ParseIntPipe) start,
+        @Query('_limit', new DefaultValuePipe(3), ParseIntPipe) limit
+    ): Promise<OrderEntity[]> {
+        const order = {
+            [sortBy]: sortDirection.toUpperCase()
+        };
+        return await this.ordersService.findOrders(start, limit, order);
+    }
+
     @UseGuards(JwtAuthGuard)
     @Get('count/me')
     async countMyOrders(@User() payload: PayloadInterface): Promise<Number> {
@@ -56,25 +69,18 @@ export class OrdersController {
         return await this.ordersService.countUserOrders(id);
     }
 
-    @Get()
-    async findOrders(
-        @Query('name_contains', new DefaultValuePipe('')) contains,
-        @Query('_sort', new DefaultValuePipe('name')) sortBy,
-        @Query('_direction', new DefaultValuePipe('ASC')) sortDirection,
-        @Query('_start', new DefaultValuePipe(0), ParseIntPipe) start,
-        @Query('_limit', new DefaultValuePipe(3), ParseIntPipe) limit
-    ): Promise<OrderEntity[]> {
-        const order = {
-            [sortBy]: sortDirection.toUpperCase()
-        };
-        return await this.ordersService.findOrders(contains, start, limit, order);
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
+    @Get('waiting/count')
+    async countWaitingOrders(): Promise<Number> {
+        return await this.ordersService.countWaitingOrders();
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
     @Get('count')
-    async countOrders(): Promise<Number> {
-        return await this.ordersService.countOrders();
+    async countAllOrders(): Promise<Number> {
+        return await this.ordersService.countAllOrders();
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)

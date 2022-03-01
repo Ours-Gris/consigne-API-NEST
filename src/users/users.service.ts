@@ -10,7 +10,6 @@ import { UserRole } from '../enums/user.role';
 import { CollecteStatus } from '../enums/collecte.status';
 import { deleteFile } from '../utils/file-upload.utils';
 import { UserStatus } from '../enums/user.status';
-import { OrderStatus } from '../enums/order.status';
 
 @Injectable()
 export class UsersService {
@@ -182,15 +181,6 @@ export class UsersService {
             where: {
                 collecte_point: true,
                 collecte_status: In([CollecteStatus.FULL, CollecteStatus.ALMOST_FULL])
-            }
-        });
-    }
-
-    async countUsersWaitingOrder(): Promise<Number> {
-        return await this.userRepository.count({
-            join: { alias: 'users', innerJoin: { orders: 'users.orders' } },
-            where: qb => {
-                qb.where('orders.order_status IN (:...status)', { status: [OrderStatus.PENDING_VALIDATION, OrderStatus.PENDING_DELIVERY] });
             }
         });
     }

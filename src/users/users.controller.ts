@@ -51,7 +51,7 @@ export class UsersController {
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
-    @Get('waiting')
+    @Get('waiting-passage')
     async findUsersWaitingPassage(
         @Query('_contains', new DefaultValuePipe('')) contains,
         @Query('_sort', new DefaultValuePipe('collecte_status')) sortBy,
@@ -85,13 +85,6 @@ export class UsersController {
     @Get('waiting-passage/count')
     async countUsersWaitingPassage(): Promise<Number> {
         return await this.usersService.countUsersWaitingPassage();
-    }
-
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(UserRole.ADMIN)
-    @Get('waiting-order/count')
-    async countUsersWaitingOrder(): Promise<Number> {
-        return await this.usersService.countUsersWaitingOrder();
     }
 
     @UseGuards(JwtAuthGuard, EmailUniqueGuard, RolesGuard)

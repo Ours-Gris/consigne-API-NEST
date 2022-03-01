@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Like, Repository } from 'typeorm';
+import { DeleteResult, In, Repository } from 'typeorm';
 import { OrderEntity } from './entities/order.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { ItemEntity } from './entities/item.entity';
 import { PayloadInterface } from '../users/interfaces/payload.interface';
+import { OrderStatus } from '../enums/order.status';
 
 @Injectable()
 export class OrdersService {
@@ -33,22 +34,18 @@ export class OrdersService {
     }
 
     async findOrders(
-        contains: string,
         skip: number,
         take: number,
         order: any
     ): Promise<OrderEntity[]> {
         return await this.orderRepository.find({
-            skip, take, order, relations: ['items', 'items.material'],
-            where: {
-                label: Like(`%${contains}%`)
-            }
+            skip, take, order, relations: ['items', 'items.material', 'user', 'user.delivery_address']
         });
     }
 
     async createOrder(payload: PayloadInterface, order: CreateOrderDto): Promise<OrderEntity> {
-        order.user.id = payload.sub
-        return  await this.orderRepository.save(order);
+        order.user.id = payload.sub;
+        return await this.orderRepository.save(order);
     }
 
     async updateOrder(
@@ -74,11 +71,17 @@ export class OrdersService {
         return await this.orderRepository.delete(id);
     }
 
-    async countOrders(): Promise<Number> {
-        return await this.orderRepository.count();
-    }
-
     async countUserOrders(idUser: string): Promise<Number> {
         return await this.orderRepository.count({ where: { user: idUser } });
+    }
+
+    async countWaitingOrders(): Promise<Number> {
+        return await this.orderRepository.count({
+            where: { order_status: In([OrderStatus.PENDING_VALIDATION, OrderStatus.PENDING_DELIVERY]) }
+        });
+    }
+
+    async countAllOrders(): Promise<Number> {
+        return await this.orderRepository.count();
     }
 }
